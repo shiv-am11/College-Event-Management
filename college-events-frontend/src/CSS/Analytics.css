@@ -1,0 +1,60 @@
+.Admin-analytics h1 {
+  font-size: 24px;
+}
+
+.Admin-stats-row{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.stat {
+  background: #fff;
+  padding: 18px;
+  border-radius: 14px;
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.stat span {
+  display: block;
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.chart {
+  background: #fff;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.bar {
+  background: #e5e7eb;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.bar span {
+  display: block;
+  background: #4f46e5;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.line-chart {
+  height: 120px;
+  background: linear-gradient(135deg, #4f46e5, #a78bfa);
+  border-radius: 12px;
+}

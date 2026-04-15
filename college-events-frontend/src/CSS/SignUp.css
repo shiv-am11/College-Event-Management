@@ -1,0 +1,175 @@
+.signup-page {
+  display: flex;
+  min-height: 100vh;
+  font-family: inherit;
+}
+
+/* Left */
+.signup-form {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.form-container {
+  max-width: 420px;
+  width: 100%;
+}
+
+/* Logo */
+.logo-S {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+  color: #111;
+  margin-bottom: 25px;
+}
+
+.logo-icon {
+  background:#4f46e5 ;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* Headings */
+h1 {
+  font-size: 28px;
+}
+.Sub-line{
+  color: #666;
+  margin-bottom: 25px;
+  margin-top: 10px;
+  font-size: 15px;
+}
+.role-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 15px 0 25px;
+}
+
+.role-card {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+  text-align: center;
+  background: white;
+  height: 13vh;
+  transition: 0.2s;
+}
+
+.role-card svg {
+  margin-bottom: 6px;
+}
+.role-card.active {
+  border-color: #4f46e5;
+  background: #fff5f5;
+  color: #4f46e5;
+}
+
+/* Inputs */
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.input-wrapper input {
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.eye-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Button */
+.submit-btn {
+  width: 100%;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background: #4f46e5;
+}
+
+/* Text */
+.terms,
+.login-link {
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+  margin-top: 15px;
+}
+
+.terms a,
+.login-link a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Right */
+.signup-illustration {
+  flex: 1;
+  background: linear-gradient(135deg, #845ef7, #5f3dc4);
+  color: white;
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .signup-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.illustration-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.icon-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 25px;
+}

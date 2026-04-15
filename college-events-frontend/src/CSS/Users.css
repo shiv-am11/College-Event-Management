@@ -1,0 +1,111 @@
+.users-page h1 {
+  font-size: 24px;
+}
+.subtitle {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.user-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  position: relative;
+}
+
+.user-top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #4f46e5;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+}
+
+.email {
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  gap: 6px;
+}
+
+.menu-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: absolute;
+  top: 50px;
+  right: 16px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.dropdown button {
+  padding: 10px 14px;
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.user-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.role.student { background: #e0e7ff; color: #3730a3; }
+.role.faculty { background: #f3e8ff; color: #6b21a8; }
+
+.active { background: #dcfce7; color: #166534; }
+.blocked { background: #fee2e2; color: #991b1b; }
+
+.dept {
+  margin-left: auto;
+  color: #666;
+}

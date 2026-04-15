@@ -1,0 +1,51 @@
+.ue-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.ue-item {
+  background: #f9fafb;
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.ue-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ue-header span {
+  font-size: 12px;
+  color: #4f46e5;
+}
+
+.ue-progress {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.ue-progress div {
+  height: 100%;
+  background: linear-gradient(to right, #4f46e5, #6366f1);
+}
+
+.ue-capacity {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.ue-btn {
+  width: 100%;
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #4f46e5;
+  font-weight: 500;
+  cursor: pointer;
+}

@@ -1,0 +1,15 @@
+.dashboard-layout {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+/* Right side content */
+.dashboard-main {
+  margin-left: 260px; /* same as sidebar width */
+  transition: margin-left 0.3s ease;
+}
+
+/* Page content */
+.dashboard-content {
+  padding: 24px;
+}

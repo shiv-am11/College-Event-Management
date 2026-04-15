@@ -1,0 +1,190 @@
+.main-login-page {
+  display: flex;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+/* Left Side */
+.login-form {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.main-form-container {
+  max-width: 420px;
+  width: 100%;
+}
+
+/* Logo */
+.main-logo-Login {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #111;
+  text-decoration: none;
+  margin-bottom: 15px;
+}
+
+.login-logo-icon {
+  background: #4f46e5;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* Headings */
+h1 {
+  font-size: 28px;
+}
+
+.Sub-lines{
+  color: #666;
+  margin-bottom: 25px;
+  margin-top: 10px;
+  font-size: 15px;
+}
+.Login-role-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 15px 0 25px;
+}
+
+.Login-role-card {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+  text-align: center;
+  background: white;
+  height: 13vh;
+  transition: 0.2s;
+}
+
+.Login-role-card svg {
+  margin-bottom: 6px;
+}
+.Login-role-card.active-role {
+  border-color: #4f46e5;
+  background: #fff5f5;
+  color: #4f46e5;
+}
+
+
+/* Inputs */
+.input-group {
+  margin-bottom: 18px;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-group label {
+    color: #666;
+  margin-bottom: 6px;
+  display: block;
+  font-size: 14px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.input-wrapper input {
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.eye-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.forgot {
+  font-size: 12px;
+  color: #845ef7;
+  text-decoration: none;
+}
+
+/* Button */
+.submit-btn {
+  width: 100%;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+    transition: all 0.2s ease;
+  background: #5a52fd;
+}
+
+/* Bottom Text */
+.signup-link {
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+  margin-top: 15px;
+}
+
+.signup-link a {
+  color: #845ef7;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Right Side Illustration */
+.login-illustration {
+  flex: 1;
+  background: linear-gradient(135deg, #845ef7, #5f3dc4);
+  color: white;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .login-illustration {
+    display: flex;
+  }
+}
+
+.illustration-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.icon-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 25px;
+}

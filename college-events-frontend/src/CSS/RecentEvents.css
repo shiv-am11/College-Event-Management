@@ -1,0 +1,73 @@
+.re-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.re-title {
+  padding: 16px;
+  font-weight: 600;
+  color: #434c56;
+  font-size: 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.re-row {
+  display: flex;
+  align-items: center;
+  height: 70px;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.re-row:last-child {
+  border-bottom: none;
+}
+
+.re-bar {
+  width: 4px;
+  height: 40px;
+  border-radius: 4px;
+}
+
+.tech { background: #3b82f6; }
+.cultural { background: #a855f7; }
+.sports { background: #22c55e; }
+
+.re-info {
+  flex: 1;
+}
+.re-info p{
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.re-info h4 {
+  color: #434c56;
+  font-size: 16px;
+  font-weight: 550;
+  margin-bottom: 4px;
+  
+}
+
+.re-meta {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.re-status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  text-transform: capitalize;
+}
+
+.approved { background: #dcfce7; color: #166534; }
+.pending { background: #fef3c7; color: #92400e; }
+.rejected { background: #fee2e2; color: #991b1b; }
