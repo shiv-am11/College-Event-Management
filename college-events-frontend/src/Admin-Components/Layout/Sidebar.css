@@ -57,7 +57,7 @@
   gap: 6px;
 }
 
-.menu-item {
+.menu-item-admin {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -67,16 +67,15 @@
   text-decoration: none;
   font-weight: 550;
   font-size: 16px;
-  height: 25px;
   transition: background 0.2s ease;
 }
 
-.menu-item:hover {
+.menu-item-admin:hover {
   background: #eeefff;
   color: #6567f6;
 }
 
-.menu-item.active {
+.menu-item-admin.active {
   background: #6467f2;
   color: white;
 }

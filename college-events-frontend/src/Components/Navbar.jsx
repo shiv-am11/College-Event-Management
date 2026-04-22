@@ -34,8 +34,8 @@ const navLinks = [
 
         {/* Auth Buttons */}
         <div className="auth-buttons">
-          <Link to="/login" className="btn btn-ghost">Sign In</Link>
-          <Link to="/SignUp" className="btn btn-primary">Get Started</Link>
+          <Link to="/login" className="btn-ghost">Sign In</Link>
+          <Link to="/SignUp" className="btn-Nav">Get Started</Link>
         </div>
 
         {/* Mobile Menu Button */}

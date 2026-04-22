@@ -16,10 +16,21 @@ export default function RecentEvents({events}) {
             <h4>{event.title}</h4>
             <p>{event.category}</p>
             <div className="re-meta">
-              <span><Calendar size={14} /> {event.date}</span>
-              <span><Clock size={14} /> {event.time}</span>
-              <span><MapPin size={14} /> {event.venue}</span>
-            </div>
+  <span className="meta-item">
+    <Calendar size={14} />
+    <span>{event.date}</span>
+  </span>
+
+  <span className="meta-item">
+    <Clock size={14} />
+    <span>{event.time}</span>
+  </span>
+
+  <span className="meta-item">
+    <MapPin size={14} />
+    <span>{event.venue}</span>
+  </span>
+</div>
           </div>
 
           <span className={`re-status ${event.status}`}>{event.status}</span>

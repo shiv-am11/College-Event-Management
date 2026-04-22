@@ -35,14 +35,12 @@ export default function CreateEvent() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
-  // 🔥 IMAGE HANDLER (with preview)
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setFormData((prev) => ({ ...prev, image: file }));
 
     if (file) {
-      setPreview(URL.createObjectURL(file)); // preview generate
+      setPreview(URL.createObjectURL(file)); 
     }
   };
 
@@ -56,7 +54,6 @@ export default function CreateEvent() {
 
       const data = new FormData();
 
-      // 🔥 clean append (loop)
       Object.keys(formData).forEach((key) => {
         if (formData[key]) {
           data.append(key, formData[key]);
@@ -108,14 +105,14 @@ export default function CreateEvent() {
   return (
     <DashboardLayout>
       <form className="create-event" onSubmit={handleSubmit}>
-        <div className="Event-header">
+        <div className="Cr-Event-header">
           <h1>Create New Event</h1>
           <p>Fill in the details to create a new event</p>
         </div>
 
         {showSuccess && (
           <div className="success-toast">
-            <CheckCircle />
+            <CheckCircle color="#6467f2" />
             <span>Event created successfully!</span>
           </div>
         )}
@@ -165,9 +162,8 @@ export default function CreateEvent() {
 
           <div className="field">
             <label><Image /> Event Image</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} required />
+            <input style={{height:"100px"}} type="file" accept="image/*" onChange={handleImageChange} required />
 
-            {/* 🔥 IMAGE PREVIEW */}
             {preview && (
               <img
                 src={preview}
@@ -178,7 +174,7 @@ export default function CreateEvent() {
           </div>
 
           <div className="buttons">
-            <button className="publish" type="submit" disabled={isSubmitting}>
+            <button className="EC-publish" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Publishing..." : <><Send /> Publish Event</>}
             </button>
           </div>

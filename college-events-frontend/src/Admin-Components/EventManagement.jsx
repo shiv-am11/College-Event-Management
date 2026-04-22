@@ -106,7 +106,7 @@ useEffect(() => {
 
   return (
     <DashboardLayout>
-      <div className="events-page">
+      <div className="eventsM-page">
         {/* Header */}
         <div className="eventsM-header">
           <h1>Events Management</h1>
@@ -115,7 +115,7 @@ useEffect(() => {
 
         {/* Filters */}
         <div className="events-filters">
-          <div className="search-box">
+          <div className="search-box-EM">
             <Search size={18} />
             <input
               type="text"

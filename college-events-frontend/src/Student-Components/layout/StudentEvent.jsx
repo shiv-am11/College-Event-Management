@@ -12,11 +12,11 @@ const StudentEvents = () => {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     axios.get("http://localhost:3000/api/student/events")
       .then((res) => {
-      console.log("DATA:", res.data); // 👈 ADD THIS
       setEvents(res.data.events);
     })
     .catch((err) => console.error(err));
@@ -29,7 +29,7 @@ const StudentEvents = () => {
   });
  const handleRegister = async (eventId) => {
   try {
-    const token = localStorage.getItem("token"); // ✅ correct
+    const token = localStorage.getItem("token");
 
     const res = await fetch(
       `http://localhost:3000/api/student/events/${eventId}/register`,
@@ -104,8 +104,10 @@ const StudentEvents = () => {
               </div>
               <button onClick={()=>handleRegister(event._id)}
                className={`btn-event ${event.attendees >= event.capacity ? "full" : ""}`}
-               disabled={event.attendees >= event.capacity}
-               >{event.attendees >= event.capacity ? "full" : "Register Now"}</button>
+               disabled={event.attendees >= event.capacity|| event.registeredStudent?.includes(userId) }
+               >{event.attendees >= event.capacity ? "full"
+                : event.registeredStudent?.includes(userId)
+                ? "Registerd" : "Register Now"}</button>
             </div>
           </div>
         ))}

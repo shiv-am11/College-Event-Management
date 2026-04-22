@@ -11,13 +11,11 @@ const EventSchema = new mongoose.Schema({
   capacity: { type: Number, required: true },
   image: String,
   status: { type: String, default: "approved" }, 
-  registeredStudent:[
- {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "User"
- }
-],
-default :[],
+  registeredStudent: {
+  type: [mongoose.Schema.Types.ObjectId],
+  ref: "User",
+  default: []
+}
 });
 
 

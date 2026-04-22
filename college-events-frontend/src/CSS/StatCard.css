@@ -8,12 +8,14 @@
 }
 
 .stat-title {
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: bold;
   color: #6b7280;
 }
 
 .stat-card h2 {
   font-size: 32px;
+  font-weight: 600;
   margin-top: 8px;
 }
 

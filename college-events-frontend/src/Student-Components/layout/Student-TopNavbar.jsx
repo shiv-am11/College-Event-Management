@@ -25,10 +25,8 @@ export function TopNavbar() {
   return (
     <header className="top-navbar">
       <div className="Admin-hero">
-        <h1>Student Dashboard</h1>
       </div>
       <div className="navbar-actions">
-        {/* Notifications */}
         <div className="dropdown-wrapper">
           <button
             className="icon-btn"

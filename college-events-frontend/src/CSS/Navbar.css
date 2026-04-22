@@ -22,8 +22,6 @@ body{
   align-items: center;
   padding: 0.9rem 3rem;
 }
-
-/* Logo */
 .logo {
 
   display: flex;
@@ -71,7 +69,7 @@ body{
   transition: all 0.2s ease-out;
 }
 
-/* Auth buttons */
+
 .auth-buttons {
   display: flex;
   gap: 0.5rem;
@@ -86,34 +84,51 @@ body{
 }
 
 .btn-ghost {
-  border: 1px solid #555;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #e1e1e1;
+  width: 100px;
   display: flex;
   align-items: center;
-  background: transparent;
+  background: white;
   color: #555;
   border-radius: 13px;
   font-size: 15px;
 }
 
 .btn-ghost:hover {
-  background: #f0f0f0;
   transition: all 0.3s ease;
-  background-color: #4f46e5;
-  color: white;
+  background-color: #e6e5ff;
+  color: #4338ca;
 }
 
-.btn-primary {
+.btn {
   background: #4f46e5;
   color: white;
   border-radius: 9px;
   font-size: 17px;
-  height: 27px;
+  height: 40px;
   width: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+.btn-Nav{
+  background: #4f46e5;
+  color: white;
+  border-radius: 9px;
+  font-size: 17px;
+  height: 40px;
+  width: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
+}
+.btn-Nav:hover{
+  background-color: #6558ee;
+  transition: all 200ms ease;
+}
 .btn-primary:hover {
   background: #4338ca;
   border-radius: 16px;

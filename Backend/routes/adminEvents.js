@@ -102,5 +102,33 @@ router.delete("/events/:id", protect, allowRoles("admin"), async (req, res) => {
     res.status(400).json({ success: false, message: err.message });
   }
 });
+router.get(
+  "/event/:id/registrations",
+  protect,
+  allowRoles("admin"),
+  async (req, res) => {
+    try {
+      console.log("EVENT ID:", req.params.id);
 
+      const event = await Event.findById(req.params.id).populate({
+        path: "registeredStudent",
+        select: "name email phone college"
+      });
+
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+
+      res.json({
+        eventId: event._id,
+        total: event.registeredStudent.length,
+        students: event.registeredStudent
+      });
+
+    } catch (err) {
+      console.error("BACKEND ERROR:", err);
+      res.status(500).json({ message: err.message });
+    }
+  }
+);
 module.exports = router;

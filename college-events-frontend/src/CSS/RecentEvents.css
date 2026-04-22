@@ -11,11 +11,16 @@
   font-size: 15px;
   border-bottom: 1px solid #e5e7eb;
 }
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 
 .re-row {
   display: flex;
   align-items: center;
-  height: 70px;
+  height: auto;
   gap: 12px;
   padding: 14px 16px;
   border-bottom: 1px solid #f1f5f9;
@@ -52,15 +57,12 @@
 }
 
 .re-meta {
-  margin-top: 5px;
+  margin-top: 6px;
   display: flex;
-  align-items: center;
-  text-align: center;
-  gap: 14px;
-  font-size: 14px;
+  gap: 16px;
+  font-size: 13px;
   color: #6b7280;
 }
-
 .re-status {
   font-size: 12px;
   padding: 4px 8px;

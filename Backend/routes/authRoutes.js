@@ -7,7 +7,7 @@ const router = express.Router();
 
 // SIGNUP
 router.post("/SignUp", async (req, res) => {
-  const { name, email, password, role, adminPin  } = req.body;
+  const { name, email, password, role, adminPin ,phone ,college  } = req.body;
 
   try {
     if(role === "admin"){
@@ -25,14 +25,20 @@ router.post("/SignUp", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      name,
+    let userData = {
+      name, 
       email,
       password: hashedPassword,
       role
-    });
+    };
+    if(role === "student"){
+      userData.phone =phone;
+      userData.college = college;
+    }
+     const user = await User.create(userData);
 
     res.status(201).json({ message: "User registered successfully" });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

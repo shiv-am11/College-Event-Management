@@ -25,40 +25,31 @@ router.get(
   allowRoles("admin"),
   async (req, res) => {
     try {
+      const today = new Date().toISOString().split("T")[0];
+
       const totalEvents = await Event.countDocuments();
 
       const upcomingEvents = await Event.countDocuments({
-        date: { $gte: new Date() },
+        date: { $gte: today },
       });
 
       const totalStudents = await User.countDocuments({
         role: "student",
       });
 
-    const registration = await Event.aggregate([
-  {
-    $project: {
-      attendeesArray: {
-        $cond: {
-          if: { $isArray: "$attendees" },
-          then: "$attendees",
-          else: [],
+      const registration = await Event.aggregate([
+        {
+          $project: {
+            count: { $size: "$registeredStudent" },
+          },
         },
-      },
-    },
-  },
-  {
-    $project: {
-      count: { $size: "$attendeesArray" },
-    },
-  },
-  {
-    $group: {
-      _id: null,
-      total: { $sum: "$count" },
-    },
-  },
-]);
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$count" },
+          },
+        },
+      ]);
 
       res.status(200).json({
         success: true,
@@ -67,10 +58,13 @@ router.get(
         totalStudents,
         totalRegistrations: registration[0]?.total || 0,
       });
+
     } catch (error) {
-      res
-        .status(500)
-        .json({ success: false, message: "Stats fetch failed" });
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: "Stats fetch failed",
+      });
     }
   }
 );

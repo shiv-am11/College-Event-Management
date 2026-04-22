@@ -18,6 +18,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum :["student" , "faculty" , "admin"],
         default: "student"
+    },
+    phone:{
+        type:String,
+        required: true,
+        unique:true
+    },
+    college:{
+        type: String,
+        required: true
     }
     }, {timestamps: true});
-    module.exports = mongoose.model("user", userSchema);
+    module.exports = mongoose.model("User", userSchema);

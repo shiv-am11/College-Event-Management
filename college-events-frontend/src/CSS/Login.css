@@ -39,7 +39,9 @@
 
 /* Headings */
 h1 {
-  font-size: 28px;
+  font-size: 23px;
+  font-weight: 600;
+  color: #3a3a3a;
 }
 
 .Sub-lines{
@@ -79,8 +81,6 @@ h1 {
   color: #4f46e5;
 }
 
-
-/* Inputs */
 .input-group {
   margin-bottom: 18px;
 }
@@ -92,7 +92,7 @@ h1 {
 }
 
 .input-group label {
-    color: #666;
+  color: #666;
   margin-bottom: 6px;
   display: block;
   font-size: 14px;

@@ -38,7 +38,7 @@ export default function UpcomingEvents({ events }) {
           return (
             <div key={e._id} className="ue-item">
               <div className="ue-header">
-                <div>
+                <div className="UpEvent-desc">
                   <h4>{e.title}</h4>
                   <p>{e.date}</p>
                 </div>

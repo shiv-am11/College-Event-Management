@@ -12,6 +12,7 @@ import {
   Briefcase,
   UserCog,
   Shield,
+  Phone,
 } from "lucide-react";
 
 const Signup = () => {
@@ -23,6 +24,8 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [adminPin, setAdminPin] = useState("");
 
+  const [phone, setPhone] = useState("");
+  const [college, setCollege] = useState("");
   const handleRoleChange = (selectedRole) => {
     setRole(selectedRole);
     if (selectedRole !== "Admin") {
@@ -32,7 +35,10 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+     if(role ==='student' && (!phone || !college)){
+       alert("Please fill all student details");
+       return;
+     }
     try {
       const res = await fetch("http://localhost:3000/api/auth/signup", {
         method: "POST",
@@ -45,6 +51,8 @@ const Signup = () => {
           password,
           role: role === "Admin" ? "admin" : role,
           adminPin: role === "Admin" ? adminPin : undefined,
+          phone: role === 'student'?phone: undefined,
+          college: role === 'student'?college: undefined, 
         }),
       });
 
@@ -164,7 +172,6 @@ const Signup = () => {
               </div>
             </div>
 
-            {/* Admin PIN UI only */}
             {role === "Admin" && (
               <div className="input-group">
                 <label>Admin PIN</label>
@@ -182,6 +189,39 @@ const Signup = () => {
                 </small>
               </div>
             )}
+
+            {/* Student Extra Fields */}
+            {role === "student" && (
+             <>
+             <div className="input-group">
+               <label>Phone Number</label>
+               <div className="input-wrapper">
+                 <Phone />
+                 <input
+                   type="text"
+                   placeholder="Enter Phone Number"
+                   value={phone}
+                   onChange={(e) => setPhone(e.target.value)}
+                   required
+                 />
+               </div>
+             </div>
+
+          <div className="input-group">
+            <label>College Name</label>
+            <div className="input-wrapper">
+              <GraduationCap />
+               <input
+                type="text"
+                placeholder="Enter College Name"
+                value={college}
+                onChange={(e) => setCollege(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+        </>
+      )}
 
             <button className="submit-btn">Create Account</button>
           </form>

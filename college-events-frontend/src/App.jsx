@@ -10,6 +10,8 @@ import Analytics from "./Admin-Components/Analytics";
 import EventManagement from "./Admin-Components/EventManagement";
 import DashboardStudent from "./Pages/DashboardStudent";
 import StudentEvents from "./Student-Components/layout/StudentEvent";
+import EventsPage from "./Admin-Components/EventsPage";
+import ViewRegister from "./Admin-Components/ViewRegister";
 
 
 function App() {
@@ -22,11 +24,14 @@ function App() {
         <Route path="/events" element={<Events/>} ></Route>
         <Route path="/admin/dashboard" element={<Dashboard/>} ></Route>
         <Route path="/CreateEvent" element={<CreateEvent/>} ></Route>
+        <Route path="/registered-students" element={<EventsPage />} ></Route>
         <Route path="/Analytics" element={<Analytics/>} ></Route>
         <Route path="/Users" element={<Users/>} ></Route>
         <Route path="/eventManagement" element={<EventManagement/>} ></Route>
         <Route path="/student/dashboard" element={<DashboardStudent/>} ></Route>
         <Route path="/student/events" element={<StudentEvents />} ></Route>
+        <Route path="/admin/event/:id/registrations" element={<ViewRegister />} ></Route>
+        
       </Routes>
   )
 }

@@ -123,6 +123,7 @@ export default function Dashboard() {
     icon: ClipboardList,
   },
 ];
+console.log("STATS:", statsData);
   return (
     <DashboardLayout>
       <div className="dashboard">
@@ -144,7 +145,6 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Main Content */}
         <div className="dashboard-grid">
           <div className="left">
             <RecentEvents events={events} />

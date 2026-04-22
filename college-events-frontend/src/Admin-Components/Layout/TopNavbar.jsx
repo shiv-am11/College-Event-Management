@@ -25,7 +25,6 @@ export function TopNavbar() {
   return (
     <header className="top-navbar">
       <div className="Admin-hero">
-        <h1>Admin Dashboard</h1>
       </div>
       <div className="navbar-actions">
         {/* Notifications */}

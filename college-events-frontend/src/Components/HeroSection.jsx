@@ -32,11 +32,11 @@ export function HeroSection() {
 
         {/* Buttons */}
         <div className="hero-buttons">
-  <Link to="/signup" className="btn-primary-large">
+  <Link to="/signup" className="btn-primary-Hero">
     Get Started Free →
   </Link>
 
-  <Link to="/events" className="btn-outline-small">
+  <Link to="/events" className="btn-outline-Hero">
     Browse Events
   </Link>
 </div>
@@ -44,17 +44,17 @@ export function HeroSection() {
 
         {/* Stats */}
         <div className="hero-stats">
-          <div className="stat">
+          <div className="Hero-stat">
             <div className="icons"><img src={Cal} />
             <h3>500+</h3></div>
             <p>Events Hosted</p>
           </div>
-          <div className="stat">
+          <div className="Hero-stat">
             <div className="icons"><img src={User} />
             <h3>1K+</h3></div>
             <p>Active Users</p>
           </div>
-          <div className="stat">
+          <div className="Hero-stat">
              <div className="icons"><img src={Award} />
             <h3>98%</h3></div>
             <p>Satisfaction</p>

@@ -19,6 +19,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
   { icon: Calendar, label: "Events Management", path: "/eventManagement" },
   { icon: PlusCircle, label: "Create Event", path: "/CreateEvent" },
+  { icon: Users, label: "Registered Student", path: "/registered-students" },
   { icon: Users, label: "Users", path: "/Users" },
   { icon: BarChart3, label: "Analytics", path: "/Analytics" },
   { icon: Settings, label: "Settings", path: "/settings" },
@@ -55,7 +56,7 @@ export function Sidebar() {
             <Link
               key={item.path}
               to={item.path}
-              className={`menu-item ${active ? "active" : ""} ${
+              className={`menu-item-admin ${active ? "active" : ""} ${
                 collapsed ? "center" : ""
               }`}
             >

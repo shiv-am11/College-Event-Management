@@ -28,7 +28,7 @@ export function HowItWorksSection() {
     <section className="how-it-works">
       <div className="container">
         <div className="header">
-          <span className="subtitle">How It Works</span>
+          <span className="How-subtitle">How It Works</span>
           <h2 className="title">Get Started in Three Simple Steps</h2>
           <p className="description">
             Join thousands of students and faculty members already using CampusHub
