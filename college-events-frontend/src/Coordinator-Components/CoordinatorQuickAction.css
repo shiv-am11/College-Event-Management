@@ -1,0 +1,84 @@
+.Coordi-quick-card {
+  width: 380px;
+  background: white;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.Coordi-action-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.Coordi-action-item:hover {
+  background: #eef3ff;
+}
+.Coordi-action-item:hover .Coordi-icon {
+  background: #3b82f6;   
+  color: #ffffff; 
+
+}
+.Coordi-icon {
+  transition: all 0.2s ease;
+}
+.Coordi-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.Coordi-icon.blue {
+  background: #e0e7ff;
+  color: #3b82f6;
+}
+
+.Coordi-icon.light {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.Coordi-text {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.Coordi-main {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.Coordi-sub {
+  font-size: 12px;
+  color: gray;
+  margin: 2px 0 0;
+}
+
+.arrow {
+  font-size: 14px;
+  color: gray;
+}
+
+.export {
+  border: 1px dashed #ccc;
+  background: #fff;
+}

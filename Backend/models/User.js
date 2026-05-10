@@ -14,19 +14,29 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    role:{
-        type: String,
-        enum :["student" , "faculty" , "admin"],
-        default: "student"
-    },
     phone:{
         type:String,
-        required: true,
-        unique:true
+        unique:true,
+        required: function(){
+            return this.role === "student";
+        }
     },
     college:{
         type: String,
-        required: true
-    }
+        required: function(){
+            return this.role === "student";
+        }
+    },
+    role:{
+        type: String,
+        enum :["student" , "faculty" , "admin" , "coordinator"],
+        default: "student"
+    },
+    department:{
+        type: String,
+        required : function(){
+            return this.role === "coordinator" || this.role=== "student";
+        }
+    },
     }, {timestamps: true});
     module.exports = mongoose.model("User", userSchema);

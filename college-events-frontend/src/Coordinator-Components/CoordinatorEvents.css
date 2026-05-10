@@ -1,0 +1,54 @@
+.coord-events {
+  display: grid;
+  gap: 20px;
+}
+
+.coord-card {
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.coord-card h3 {
+  margin-bottom: 6px;
+}
+
+.desc {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.reg-section {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.reg-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #eee;
+  border-radius: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4f6ef7;
+  border-radius: 10px;
+}

@@ -1,8 +1,8 @@
-const express = require ("express");
+const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const path = require("path");
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 
@@ -17,17 +17,16 @@ app.use("/api/faculty", require("./routes/facultyRoutes"));
 app.use("/api/student", require("./routes/studentRoutes"));
 app.use("/api/events", require("./routes/eventRoutes"));
 app.use("/api/admin", require("./routes/adminEvents"));
-app.use("/api/student" , require("./routes/studentEvents"));
+app.use("/api/student", require("./routes/studentEvents"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/student", require("./routes/studentDashboard"));
+app.use("/api/coordinator", require("./routes/coordinatorRoutes"));
 
+app.get("/", (req, res) => {
+    res.send("Backend is running");
+});
 
-
-app.get("/", (req,res)=>{
-    res.send("Backend is running 🚀");
-})
-
-const PORT = process.env.PORT ||3000;
-app.listen(PORT, ()=>{
-    console.log(`Server running on port ${PORT}`)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });

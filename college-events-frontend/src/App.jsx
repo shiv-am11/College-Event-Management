@@ -12,6 +12,8 @@ import DashboardStudent from "./Pages/DashboardStudent";
 import StudentEvents from "./Student-Components/layout/StudentEvent";
 import EventsPage from "./Admin-Components/EventsPage";
 import ViewRegister from "./Admin-Components/ViewRegister";
+import DashboadCoordinator from "./Pages/DashboadCoordinator";
+import CoordinatorEvents from "./Coordinator-Components/CoordinatorEvents";
 
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
         <Route path="/student/dashboard" element={<DashboardStudent/>} ></Route>
         <Route path="/student/events" element={<StudentEvents />} ></Route>
         <Route path="/admin/event/:id/registrations" element={<ViewRegister />} ></Route>
+        <Route path="/coordinator/dashboard" element={<DashboadCoordinator />} ></Route>
+        <Route path="/coordinator/events" element={<CoordinatorEvents />} ></Route>
         
       </Routes>
   )

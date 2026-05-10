@@ -5,19 +5,23 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// SIGNUP
 router.post("/SignUp", async (req, res) => {
-  const { name, email, password, role, adminPin ,phone ,college  } = req.body;
+  const { name, email, password, role, adminPin, phone, college, department } = req.body;
 
   try {
-    if(role === "admin"){
-      if(!adminPin){
+    if (role === "admin") {
+      if (!adminPin) {
         return res.status(400).json({ message: "Admin PIN is required" });
       }
       if (adminPin !== process.env.ADMIN_PIN) {
         return res.status(403).json({ message: "Invalid Admin PIN" });
       }
     }
+
+    if ((role === "student" || role === "coordinator") && !department) {
+      return res.status(400).json({ message: "Department is required" });
+    }
+
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
@@ -26,16 +30,23 @@ router.post("/SignUp", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     let userData = {
-      name, 
+      name,
       email,
       password: hashedPassword,
       role
     };
-    if(role === "student"){
-      userData.phone =phone;
+
+    if (role === "student") {
+      userData.phone = phone;
       userData.college = college;
+      userData.department = department;
     }
-     const user = await User.create(userData);
+
+    if (role === "coordinator") {
+      userData.department = department;
+    }
+
+    await User.create(userData);
 
     res.status(201).json({ message: "User registered successfully" });
 

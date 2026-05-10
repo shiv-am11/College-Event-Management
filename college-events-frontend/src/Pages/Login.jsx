@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff, Calendar, Mail, Lock ,GraduationCap,Briefcase,UserCog} from "lucide-react";
+import { Eye, EyeOff, Calendar, Mail, Lock ,GraduationCap,Briefcase,UserCog, UserStar} from "lucide-react";
 import "../CSS/Login.css";
 
 const Login = () => {
@@ -35,7 +35,10 @@ const Login = () => {
         window.location.href = "/admin/dashboard";
       } else if (data.role === "faculty") {
         window.location.href = "/faculty/dashboard";
-      } else {
+      }else if(data.role === "coordinator"){
+        window.location.href = "/coordinator/dashboard";
+      }
+       else {
         window.location.href = "/student/dashboard";
       }
     }catch(error){
@@ -89,6 +92,14 @@ const Login = () => {
               <UserCog />
               <span>Admin</span>
             </button>
+            <button
+                type="button"
+                className={`role-card ${role === "coordinator" ? "active" : ""}`}
+                onClick={() => setRole("coordinator")}
+              >
+                <UserStar />
+                <span>Coordinator</span>
+              </button>
           </div>
 
           {/* Form */}

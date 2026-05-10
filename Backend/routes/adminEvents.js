@@ -11,10 +11,11 @@ router.post(
   "/events",
   protect,
   allowRoles("admin"),
-  upload.single("image"),   
+  upload.single("image"),
   async (req, res) => {
     try {
       console.log("BODY:", req.body);
+
       let imageUrl = "";
 
       const {
@@ -24,18 +25,28 @@ router.post(
         time,
         venue,
         category,
+        department, 
         capacity,
       } = req.body || {};
 
-      if (!title || !date || !time || !venue || !capacity) {
+      // ✅ validation
+      if (
+        !title ||
+        !date ||
+        !time ||
+        !venue ||
+        !capacity ||
+        !department
+      ) {
         return res.status(400).json({
           success: false,
           message: "Required fields missing",
         });
       }
-      if(req.file){
+      if (req.file) {
         imageUrl = await uploadFile(req.file);
       }
+
       const newEvent = new Event({
         title,
         description,
@@ -43,6 +54,7 @@ router.post(
         time,
         venue,
         category,
+        department, 
         capacity,
         image: imageUrl,
         status: "approved",
@@ -57,6 +69,7 @@ router.post(
       });
     } catch (err) {
       console.log("CREATE EVENT ERROR:", err);
+
       res.status(500).json({
         success: false,
         message: err.message,
@@ -68,18 +81,31 @@ router.post(
 router.get("/events", protect, allowRoles("admin"), async (req, res) => {
   try {
     const events = await Event.find().sort({ date: 1 });
-    res.json({ success: true, events });
+
+    res.json({
+      success: true,
+      events,
+    });
   } catch (err) {
     console.log("GET EVENTS ERROR ", err);
-    res.status(500).json({ success: false, message: err.message });
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
 
+// ✅ UPDATE EVENT
 router.put("/events/:id", protect, allowRoles("admin"), async (req, res) => {
   try {
-    const event = await Event.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const event = await Event.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+      }
+    );
 
     res.json({
       success: true,
@@ -88,20 +114,39 @@ router.put("/events/:id", protect, allowRoles("admin"), async (req, res) => {
     });
   } catch (err) {
     console.log("UPDATE EVENT ERROR ", err);
-    res.status(400).json({ success: false, message: err.message });
+
+    res.status(400).json({
+      success: false,
+      message: err.message,
+    });
   }
 });
 
+// ✅ DELETE EVENT
+router.delete(
+  "/events/:id",
+  protect,
+  allowRoles("admin"),
+  async (req, res) => {
+    try {
+      await Event.findByIdAndDelete(req.params.id);
 
-router.delete("/events/:id", protect, allowRoles("admin"), async (req, res) => {
-  try {
-    await Event.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: "Event deleted successfully" });
-  } catch (err) {
-    console.log("DELETE EVENT ERROR ", err);
-    res.status(400).json({ success: false, message: err.message });
+      res.json({
+        success: true,
+        message: "Event deleted successfully",
+      });
+    } catch (err) {
+      console.log("DELETE EVENT ERROR ", err);
+
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
   }
-});
+);
+
+// ✅ EVENT REGISTRATIONS
 router.get(
   "/event/:id/registrations",
   protect,
@@ -112,23 +157,28 @@ router.get(
 
       const event = await Event.findById(req.params.id).populate({
         path: "registeredStudent",
-        select: "name email phone college"
+        select: "name email phone college",
       });
 
       if (!event) {
-        return res.status(404).json({ message: "Event not found" });
+        return res.status(404).json({
+          message: "Event not found",
+        });
       }
 
       res.json({
         eventId: event._id,
         total: event.registeredStudent.length,
-        students: event.registeredStudent
+        students: event.registeredStudent,
       });
-
     } catch (err) {
       console.error("BACKEND ERROR:", err);
-      res.status(500).json({ message: err.message });
+
+      res.status(500).json({
+        message: err.message,
+      });
     }
   }
 );
+
 module.exports = router;
