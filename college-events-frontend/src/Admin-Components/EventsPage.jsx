@@ -15,7 +15,7 @@ export default function EventsPage() {
   // 🔗 Fetch events
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/events")
+      .get(`${import.meta.env.VITE_API_URL}/api/events`)
       .then((res) => {
         setEvents(res.data);
       })

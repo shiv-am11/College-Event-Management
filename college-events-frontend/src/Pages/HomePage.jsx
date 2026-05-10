@@ -15,7 +15,7 @@ const HomePage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/test")
+      .get(`${import.meta.env.VITE_API_URL}/api/test`)
       .then((res) => {
         console.log("Backend Response 👉", res.data);
         setBackendMsg(res.data.message);

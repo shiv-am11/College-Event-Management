@@ -9,7 +9,7 @@ const StudentUpcomingEvents = () => {
       try{
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:3000/api/student/events",{
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/student/events`,{
           headers:{
             Authorization: `Bearer ${token}`,
           },

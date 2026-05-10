@@ -15,7 +15,7 @@ const StudentEvents = () => {
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    axios.get("http://localhost:3000/api/student/events")
+    axios.get(`${import.meta.env.VITE_API_URL}/api/student/events`)
       .then((res) => {
       setEvents(res.data.events);
     })
@@ -32,7 +32,7 @@ const StudentEvents = () => {
     const token = localStorage.getItem("token");
 
     const res = await fetch(
-      `http://localhost:3000/api/student/events/${eventId}/register`,
+      `${import.meta.env.VITE_API_URL}/api/student/events/${eventId}/register`,
       {
         method: "POST",
         headers: {

@@ -29,7 +29,7 @@ const CoordiRecentEvent = () => {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          "http://localhost:3000/api/coordinator/events",
+          `${import.meta.env.VITE_API_URL}/api/coordinator/events`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

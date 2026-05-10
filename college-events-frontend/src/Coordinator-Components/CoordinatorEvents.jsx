@@ -25,7 +25,7 @@ const CoordinatorEvents = () => {
     const fetchEvents = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/api/coordinator/events", // ✅ correct port
+          `${import.meta.env.VITE_API_URL}/api/coordinator/events`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

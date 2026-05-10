@@ -28,7 +28,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/api/admin/events", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/events`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -64,7 +64,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem("token");
 
-      await fetch(`http://localhost:3000/api/admin/events/${id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/admin/events/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +88,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem("token");
 
-      await fetch(`http://localhost:3000/api/admin/events/${id}`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/admin/events/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

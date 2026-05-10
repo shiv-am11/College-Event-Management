@@ -12,7 +12,7 @@ const Events = () => {
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
-    axios.get("http://localhost:3000/api/events")
+    axios.get(`${import.meta.env.VITE_API_URL}/api/events`)
       .then((res) => setEvents(res.data))
       .catch((err) => console.error("Backend not connected ❌", err));
   }, []);

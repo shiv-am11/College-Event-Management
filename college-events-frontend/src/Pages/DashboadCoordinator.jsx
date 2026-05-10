@@ -19,7 +19,7 @@ const DashboadCoordinator = () => {
     const fetchStats = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/api/coordinator/dashboard-stats",
+          `${import.meta.env.VITE_API_URL}/api/coordinator/dashboard-stats`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

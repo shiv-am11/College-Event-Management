@@ -85,7 +85,7 @@ export default function CreateEvent() {
       });
 
       const res = await fetch(
-        "http://localhost:3000/api/admin/events",
+        `${import.meta.env.VITE_API_URL}/api/admin/events`,
         {
           method: "POST",
           headers: {

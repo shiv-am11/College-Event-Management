@@ -41,7 +41,7 @@ export default function ViewRegister() {
     const token = localStorage.getItem("token");
 
     axios
-      .get(`http://localhost:3000/api/admin/event/${id}/registrations`, {
+      .get(`${import.meta.env.VITE_API_URL}/api/admin/event/${id}/registrations`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

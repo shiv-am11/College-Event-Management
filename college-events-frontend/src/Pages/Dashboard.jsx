@@ -32,7 +32,7 @@ export default function Dashboard() {
         }
 
         const res = await axios.get(
-          "http://localhost:3000/api/admin/dashboard",
+          `${import.meta.env.VITE_API_URL}/api/admin/dashboard`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -54,7 +54,7 @@ export default function Dashboard() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:3000/api/admin/events", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/events`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -79,7 +79,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/api/admin/stats", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
