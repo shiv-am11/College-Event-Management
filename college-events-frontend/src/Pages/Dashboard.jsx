@@ -124,6 +124,7 @@ export default function Dashboard() {
   },
 ];
 console.log("STATS:", statsData);
+
   return (
     <DashboardLayout>
       <div className="dashboard">

@@ -59,8 +59,6 @@ export default function FeaturesSection() {
             Powerful tools designed specifically for educational institutions
           </p>
         </div>
-
-        {/* Features Grid */}
         <div className="features-grid">
           {features.map((feature, index) => {
             const Icon = feature.icon;
