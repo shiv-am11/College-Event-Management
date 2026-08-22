@@ -18,12 +18,14 @@ const protect = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id).select("-password");
-
+    const user = await User.findById(decoded?.id).select("-password");
+    if(!user){
+        throw new ApiError(401 ,"Invalid Token")
+    }
     req.user = user;
     next();
   } catch (error) {
-    console.error("JWT ERROR ", error.message);
+    console.error("Jwt error ", error.message);
     res.status(401).json({ message: "Not authorized, token failed" });
   }
 };

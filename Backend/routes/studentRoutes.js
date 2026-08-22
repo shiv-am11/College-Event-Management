@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/dashboard", protect, allowRoles("student"), (req, res) => {
   res.json({
-    message: "Welcome Student 🎓",
+    message: "Welcome Student",
     user: req.user,
   });
 });

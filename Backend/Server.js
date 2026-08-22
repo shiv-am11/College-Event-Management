@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db");
+const {connectDB} = require("./config/db");
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 connectDB();
 
-app.use("/api", require("./routes/testRoutes"));
+//all routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/faculty", require("./routes/facultyRoutes"));

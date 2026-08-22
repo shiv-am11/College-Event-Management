@@ -45,8 +45,13 @@ router.post("/SignUp", async (req, res) => {
     if (role === "coordinator") {
       userData.department = department;
     }
-
-    await User.create(userData);
+    console.log("BEFORE CREATE DB:", User.db.name);
+    console.log("BEFORE CREATE COLLECTION:", User.collection.name);
+    const newUser = await User.create(userData);
+    console.log("NEW USER:", newUser);
+console.log("DATABASE:", User.db.name);
+console.log("COLLECTION:", User.collection.name);
+   
 
     res.status(201).json({ message: "User registered successfully" });
 
@@ -71,7 +76,8 @@ router.post("/Login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, 
+      role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );

@@ -17,11 +17,11 @@ const HomePage = () => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/test`)
       .then((res) => {
-        console.log("Backend Response 👉", res.data);
+        console.log("Backend Response ", res.data);
         setBackendMsg(res.data.message);
       })
       .catch((err) => {
-        console.error("Backend not connected ❌", err);
+        console.error("Backend not connected", err);
       });
   }, []);
 

@@ -29,19 +29,21 @@ router.post(
         capacity,
       } = req.body || {};
 
-      // ✅ validation
       if (
-        !title ||
+        !title?.trim() ||
         !date ||
         !time ||
-        !venue ||
+        !venue?.trim() ||
         !capacity ||
-        !department
+        !department?.trim()
       ) {
         return res.status(400).json({
           success: false,
           message: "Required fields missing",
         });
+      }
+      if(!Number.isInteger(Number(capacity)) || Number(capacity) <= 0){
+        return res.status(400).json({success:false , message:"Capacity must be positive number"})
       }
       if (req.file) {
         imageUrl = await uploadFile(req.file);
@@ -96,7 +98,6 @@ router.get("/events", protect, allowRoles("admin"), async (req, res) => {
   }
 });
 
-// ✅ UPDATE EVENT
 router.put("/events/:id", protect, allowRoles("admin"), async (req, res) => {
   try {
     const event = await Event.findByIdAndUpdate(
@@ -121,8 +122,6 @@ router.put("/events/:id", protect, allowRoles("admin"), async (req, res) => {
     });
   }
 });
-
-// ✅ DELETE EVENT
 router.delete(
   "/events/:id",
   protect,
@@ -145,8 +144,6 @@ router.delete(
     }
   }
 );
-
-// ✅ EVENT REGISTRATIONS
 router.get(
   "/event/:id/registrations",
   protect,
