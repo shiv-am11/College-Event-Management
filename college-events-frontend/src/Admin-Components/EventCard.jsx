@@ -18,13 +18,12 @@ function EventCard({ event }) {
 
         <p className="desc">
           {event.description
-            ? event.description.slice(0, 50) + "..."
-            : "No description available"}
+           ||"No description available"}
         </p>
 
         <div className="info">
           <span>
-            <Calendar size={14} /> {event.date}
+            <Calendar size={14} /> {event.date.split("T")[0]}
           </span>
 
           <span>

@@ -12,7 +12,6 @@ export default function EventsPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
 
-  // 🔗 Fetch events
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/events`)
@@ -107,7 +106,7 @@ export default function EventsPage() {
 
         <div className="grid">
           {filtered.length === 0 ? (
-            <p>No events found</p>
+            <p>No events found :(</p>
           ) : (
             filtered.map((event) => (
               <EventCard key={event.id} event={event} />

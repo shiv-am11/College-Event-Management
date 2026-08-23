@@ -18,7 +18,7 @@ export default function RecentEvents({events}) {
             <div className="re-meta">
   <span className="meta-item">
     <Calendar size={14} />
-    <span>{event.date}</span>
+    <span>{event.date.split("T")[0]}</span>
   </span>
 
   <span className="meta-item">
