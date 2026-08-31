@@ -14,10 +14,7 @@ router.post(
   upload.single("image"),
   async (req, res) => {
     try {
-      console.log("BODY:", req.body);
-
       let imageUrl = "";
-
       const {
         title,
         description,
@@ -39,7 +36,7 @@ router.post(
       ) {
         return res.status(400).json({
           success: false,
-          message: "Required fields missing",
+          message: "All fields are required!",
         });
       }
       if(!Number.isInteger(Number(capacity)) || Number(capacity) <= 0){

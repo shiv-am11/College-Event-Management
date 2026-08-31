@@ -39,7 +39,7 @@ const StudentUpcomingEvents = () => {
 
       {events.map((e, i) => (
         <div key={i} className="event-row">
-          <div className="date">{e.date}</div>
+          <div className="date">{e.date.split("T")[0]}</div>
           <div className="details">
             <h4>{e.title}</h4>
             <p>{e.time} • {e.venue}</p>

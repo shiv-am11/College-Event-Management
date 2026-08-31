@@ -21,7 +21,6 @@ app.use("/api/student", require("./routes/studentEvents"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/student", require("./routes/studentDashboard"));
 app.use("/api/coordinator", require("./routes/coordinatorRoutes"));
-
 app.get("/", (req, res) => {
     res.send("Backend is running");
 });

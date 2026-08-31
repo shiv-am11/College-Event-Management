@@ -45,14 +45,7 @@ router.post("/SignUp", async (req, res) => {
     if (role === "coordinator") {
       userData.department = department;
     }
-    console.log("BEFORE CREATE DB:", User.db.name);
-    console.log("BEFORE CREATE COLLECTION:", User.collection.name);
     const newUser = await User.create(userData);
-    console.log("NEW USER:", newUser);
-console.log("DATABASE:", User.db.name);
-console.log("COLLECTION:", User.collection.name);
-   
-
     res.status(201).json({ message: "User registered successfully" });
 
   } catch (error) {
@@ -61,7 +54,8 @@ console.log("COLLECTION:", User.collection.name);
 });
 
 // LOGIN
-router.post("/Login", async (req, res) => {
+router.post("/login", async (req, res) => {
+    console.log("LOGIN BODY:", req.body);
   const { email, password } = req.body;
 
   try {
@@ -71,6 +65,7 @@ router.post("/Login", async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+     console.log("PASSWORD MATCH:", isMatch);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }

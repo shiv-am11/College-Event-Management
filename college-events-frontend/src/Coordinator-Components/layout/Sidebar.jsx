@@ -17,6 +17,7 @@ import "../layout/Sidebar.css";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/coordinator/dashboard" },
+  {icon: PlusCircle , label: "Create Event" , path:"/coordinator/createEvent"},
   { icon: Calendar, label: "My Events", path: "/coordinator/events" },
   { icon: Users , label: "Department Students", path: "/Student/Activities" },
   { icon: Settings, label: "Settings", path: "/Student/settings" },

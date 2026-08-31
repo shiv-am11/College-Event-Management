@@ -173,7 +173,7 @@ useEffect(() => {
 
                   <td>
                     <div className="row-icon">
-                      <Calendar size={14} /> {event.date}
+                      <Calendar size={14} /> {event.date.slice("T")[0]}
                     </div>
                     <div className="row-icon muted">
                       <Clock size={14} /> {event.time}

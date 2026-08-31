@@ -104,11 +104,8 @@ export default function CreateEvent() {
 
         return;
       }
-
-      // ✅ success
       setShowSuccess(true);
 
-      // ✅ reset form
       setFormData({
         title: "",
         description: "",

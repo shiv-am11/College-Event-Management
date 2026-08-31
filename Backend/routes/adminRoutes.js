@@ -1,7 +1,7 @@
 const express = require("express");
 const protect = require("../Middleware/authMiddleware");
 const allowRoles = require("../Middleware/roleMiddleware");
-
+const {createUser} = require("../Controller/adminCreate.controller")
 const Event = require("../models/Event");
 const User = require("../models/User");
 
@@ -68,5 +68,6 @@ router.get(
     }
   }
 );
+router.post("/users",protect,allowRoles("admin"),createUser )
 
 module.exports = router;

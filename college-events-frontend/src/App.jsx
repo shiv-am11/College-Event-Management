@@ -14,6 +14,7 @@ import EventsPage from "./Admin-Components/EventsPage";
 import ViewRegister from "./Admin-Components/ViewRegister";
 import DashboadCoordinator from "./Pages/DashboadCoordinator";
 import CoordinatorEvents from "./Coordinator-Components/CoordinatorEvents";
+import CoordinatorCreateEvent from "./Coordinator-Components/CoordinatorCreateEvent";
 
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
         <Route path="/admin/event/:id/registrations" element={<ViewRegister />} ></Route>
         <Route path="/coordinator/dashboard" element={<DashboadCoordinator />} ></Route>
         <Route path="/coordinator/events" element={<CoordinatorEvents />} ></Route>
-        
+        <Route path="/coordinator/createEvent" element={<CoordinatorCreateEvent/>}></Route>
       </Routes>
   )
 }
