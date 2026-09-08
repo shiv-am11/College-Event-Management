@@ -28,6 +28,15 @@ const userSchema = new mongoose.Schema({
     },
     college:{
         type: String,
+        trim:true,
+        required: function(){
+            return this.role === "student";
+        }
+    },
+    course:{
+        type:String,
+        trim:true,
+        enum:["MCA" ,"BCA", "BBA","BA ECO" ],
         required: function(){
             return this.role === "student";
         }
@@ -41,6 +50,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required : function(){
             return this.role === "coordinator" || this.role=== "student";
+        }
+    },
+    year:{
+        type:String,
+        trim:true,
+        enum:["1st Year" ,"2nd Year","3rd Year"],
+        required: function(){
+            return this.role === "student";
         }
     },
     }, {timestamps: true});

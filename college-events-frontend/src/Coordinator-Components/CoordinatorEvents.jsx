@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./CoordinatorEvents.css";
-import { Calendar, Clock, MapPin, Search } from "lucide-react";
+import { Calendar, Clock, MapPin, Search, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import CoordinatorDashboardLayout from "./layout/CoordinatorDashLayout";
 
 const formatDate = (dateValue) => {
   if (!dateValue) return "Date not available";
 
   const parsedDate = new Date(dateValue);
+
   if (Number.isNaN(parsedDate.getTime())) {
     return dateValue;
   }
@@ -21,22 +23,25 @@ const CoordinatorEvents = () => {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        const token = localStorage.getItem("token");
+
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/coordinator/events`,
+          `http://localhost:3000/api/coordinator/events`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-
-        setEvents(res.data.events || []);
+        setEvents(res.data || []);
         setError("");
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching coordinator events:", err);
         setError("Unable to load coordinator events.");
       } finally {
         setLoading(false);
@@ -45,21 +50,30 @@ const CoordinatorEvents = () => {
 
     fetchEvents();
   }, []);
+
   const filteredEvents = events.filter((e) =>
     e.title.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleViewRegistrations = (eventId) => {
+    navigate(`/coordinator/event/${eventId}/registrations`);
+  };
+
   return (
     <CoordinatorDashboardLayout>
       <div className="events-Main">
+
         <h1>Events</h1>
+
         <p className="subtitle-event">
           Discover and manage your department events.
         </p>
 
+        {/* SEARCH */}
         <div className="filters">
           <div className="search-box">
             <Search size={20} />
+
             <input
               type="text"
               placeholder="Search events..."
@@ -69,62 +83,95 @@ const CoordinatorEvents = () => {
           </div>
         </div>
 
+        {/* LOADING */}
         {loading ? (
           <p>Loading...</p>
+
         ) : error ? (
           <p>{error}</p>
+
         ) : filteredEvents.length === 0 ? (
           <p>No department events found.</p>
+
         ) : (
+
           <div className="coord-events">
+
             {filteredEvents.map((event) => {
-              const registered = event.registeredStudents?.length || 0;
+
+              // Event schema mein field:
+              // registeredStudent
+              const registered =
+                event.registeredStudent?.length || 0;
 
               const percentage = event.capacity
-                ? Math.min((registered / event.capacity) * 100, 100)
+                ? Math.min(
+                    (registered / event.capacity) * 100,
+                    100
+                  )
                 : 0;
 
               return (
-                <div key={event._id} className="coord-card">
-                  <img src={event.image} alt={event.title} />
+                <div
+                  key={event._id}
+                  className="coord-card"
+                >
+
+                  {/* IMAGE */}
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                  />
+
+                  {/* TITLE */}
                   <h3>{event.title}</h3>
-                  <p className="desc">{event.description}</p>
+
+                  {/* DESCRIPTION */}
+                  <p className="desc">
+                    {event.description}
+                  </p>
+
+                  {/* EVENT INFO */}
                   <div className="info">
+
                     <span>
-                      <Calendar size={14} /> {formatDate(event.date)}
+                      <Calendar size={14} />
+                      {formatDate(event.date)}
                     </span>
+
                     <span>
-                      <Clock size={14} />{" "}
+                      <Clock size={14} />
                       {event.time || "Time not available"}
                     </span>
+
                     <span>
-                      <MapPin size={14} />{" "}
+                      <MapPin size={14} />
                       {event.venue || "Venue not available"}
                     </span>
-                  </div>
 
-                  <div className="reg-section">
-                    <div className="reg-header">
-                      <span>Registrations</span>
-                      <span>
-                        {registered}/{event.capacity}
-                      </span>
-                    </div>
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${percentage}%` }}
-                      ></div>
-                    </div>
                   </div>
+                  {/* VIEW REGISTRATIONS BUTTON */}
+                  <button
+                    className="view-registrations-btn"
+                    onClick={() =>
+                      handleViewRegistrations(event._id)
+                    }
+                  >
+                    <Users size={16} />
+                    View Registrations
+                  </button>
+
                 </div>
               );
             })}
+
           </div>
         )}
+
       </div>
     </CoordinatorDashboardLayout>
   );
 };
 
 export default CoordinatorEvents;
+

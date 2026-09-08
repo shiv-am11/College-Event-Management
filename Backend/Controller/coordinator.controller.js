@@ -16,11 +16,13 @@ const departmentStudents = async(req,res)=>{
 }
 const getStudentFromEvents = async(req, res)=>{
     try{
-        const fetchStudent = await Event.findById(req.params.id)
-        .populate("registeredStudent", "name email department");
+        const fetchStudent = await Event.findOne({
+            _id: req.params.id,
+            department: req.user.department
+        }).populate("registeredStudent", "name email department");
 
         if(!fetchStudent){
-            return res.status(404).json({message:"No student found"})
+            return res.status(404).json({message:"Event not found or you don't have access to this event"})
         }
         const departmentStudent = fetchStudent.registeredStudent.filter((student)=> student.department === req.user.department)
         res.json(departmentStudent);

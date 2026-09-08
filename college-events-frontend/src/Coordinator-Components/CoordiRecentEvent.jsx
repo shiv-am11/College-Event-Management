@@ -37,7 +37,7 @@ const CoordiRecentEvent = () => {
           }
         );
 
-        setEvents(res.data.events || []);
+        setEvents(res.data || []);
       } catch (err) {
         console.error("Error fetching events:", err);
       } finally {

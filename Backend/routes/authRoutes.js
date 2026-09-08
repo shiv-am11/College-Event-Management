@@ -5,13 +5,15 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-router.post("/SignUp", async (req, res) => {
-  const { name, email, password, role, adminPin, phone, college, department } = req.body;
+router.post("/signup", async (req, res) => {
+   console.log("SIGNUP ROUTE HIT");
+  console.log("SIGNUP BODY:", req.body);
+  const { name, email, password, role, adminPin, phone, college, department, year,course } = req.body;
 
   try {
     if (role === "admin") {
       if (!adminPin) {
-        return res.status(400).json({ message: "Admin PIN is required" });
+        return res.status(400).json({ message: "Admin PIN is required!" });
       }
       if (adminPin !== process.env.ADMIN_PIN) {
         return res.status(403).json({ message: "Invalid Admin PIN" });
@@ -19,7 +21,29 @@ router.post("/SignUp", async (req, res) => {
     }
 
     if ((role === "student" || role === "coordinator") && !department) {
-      return res.status(400).json({ message: "Department is required" });
+      return res.status(400).json({ message: "Department is required!" });
+    }
+
+    if(role === "student"){
+      if(!course){
+        return res.status(400).json({message : "Course is required!"})
+      }
+      if(!year){
+        return res.status(400).json({message : "Year is required!"})
+      }
+    }
+
+    const courseDurtion ={
+      MCA : 2,
+      BCA : 3,
+      BBA : 3,
+      'BA ECO' : 3
+    }
+    
+    const duration = courseDurtion[course]
+
+    if(duration === 2 && year === "3rd Year"){
+      return res.status(400).json({message: `${course} has only 2 years`});
     }
 
     const userExists = await User.findOne({ email });
@@ -40,8 +64,11 @@ router.post("/SignUp", async (req, res) => {
       userData.phone = phone;
       userData.college = college;
       userData.department = department;
+      userData.year = year;
+      userData.course =course;
     }
-
+     
+    console.log("USER DATA BEFORE CREATE:", userData);
     if (role === "coordinator") {
       userData.department = department;
     }

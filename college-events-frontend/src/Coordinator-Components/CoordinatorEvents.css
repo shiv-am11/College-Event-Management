@@ -58,3 +58,14 @@
   background: #4f6ef7;
   border-radius: 10px;
 }
+.view-registrations-btn{
+  background-color: #4f46e5;
+  width: 350px;
+  height: 37px;
+  color: white;
+  font-size: 14px;
+}
+.view-registrations-btn:hover{
+  transition: all 0.8ms ease-in;
+  background-color: #5a52ec;
+}
