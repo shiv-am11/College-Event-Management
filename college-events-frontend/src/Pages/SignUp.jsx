@@ -27,12 +27,10 @@ const Signup = () => {
 
   const [phone, setPhone] = useState("");
   const [college, setCollege] = useState("");
-  const [department, setDepartment] = useState("");
 
-  // Student course and year
+  // Course and Year
   const [course, setCourse] = useState("");
   const [year, setYear] = useState("");
-
 
   // ==========================================
   // ROLE CHANGE
@@ -45,53 +43,48 @@ const Signup = () => {
     setAdminPin("");
     setPhone("");
     setCollege("");
-    setDepartment("");
     setCourse("");
     setYear("");
   };
 
-  // ==========================================
-  // FORM SUBMIT
-  // ==========================================
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Student validation
-    if (
-      role === "student" &&
-      (
-        !phone ||
-        !college ||
-        !course ||
-        !year ||
-        !department
-      )
-    ) {
-      alert("Please fill all student details");
-      return;
-    }
+    if (role === "student") {
+      if (!phone.trim()) {
+        alert("Please enter phone number");
+        return;
+      }
 
-    // Coordinator validation
-    if (
-      role === "coordinator" &&
-      !department
-    ) {
-      alert("Please select department");
-      return;
-    }
+      if (!college.trim()) {
+        alert("Please enter college name");
+        return;
+      }
 
-    // Admin validation
-    if (
-      role === "admin" &&
-      !adminPin
-    ) {
-      alert("Admin PIN is required");
-      return;
+      if (!course) {
+        alert("Please select course");
+        return;
+      }
+
+      if (!year) {
+        alert("Please select year");
+        return;
+      }
+    }
+    if (role === "coordinator") {
+      if (!course) {
+        alert("Please select course");
+        return;
+      }
+    }
+    if (role === "admin") {
+      if (!adminPin) {
+        alert("Admin PIN is required");
+        return;
+      }
     }
 
     try {
-      // Basic user data
       const payload = {
         name,
         email,
@@ -99,37 +92,19 @@ const Signup = () => {
         role,
       };
 
-      // ==========================================
-      // ADMIN DATA
-      // ==========================================
-
       if (role === "admin") {
         payload.adminPin = adminPin;
       }
-
-      // ==========================================
-      // STUDENT DATA
-      // ==========================================
 
       if (role === "student") {
         payload.phone = phone;
         payload.college = college;
         payload.course = course;
         payload.year = year;
-        payload.department = department;
       }
-
-      // ==========================================
-      // COORDINATOR DATA
-      // ==========================================
-
       if (role === "coordinator") {
-        payload.department = department;
+        payload.course = course;
       }
-
-      // ==========================================
-      // API REQUEST
-      // ==========================================
 
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/signup`,
@@ -146,63 +121,45 @@ const Signup = () => {
 
       const data = await res.json();
 
-      // Error
       if (!res.ok) {
-        alert(
-          data.message || "Signup failed"
-        );
-
+        alert(data.message || "Signup failed");
         return;
       }
 
-      // Success
-      alert(
-        "Account created successfully!!"
-      );
-
+      alert("Account created successfully!!");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAdminPin("");
+      setPhone("");
+      setCollege("");
+      setCourse("");
+      setYear("");
     } catch (error) {
       console.error(error);
 
-      alert(
-        "Server error ❌"
-      );
+      alert("Server error ");
     }
   };
 
   return (
     <div className="signup-page">
-
-      {/* ==========================================
-          LEFT SIDE
-      ========================================== */}
-
       <div className="signup-form">
 
         <div className="form-container">
-
-          {/* ================= LOGO ================= */}
 
           <Link
             to="/"
             className="logo-S"
           >
-
             <div className="logo-icon">
-
-              <GraduationCap
-                size={22}
-              />
-
+              <GraduationCap size={22} />
             </div>
 
             <span>
               CampusHub
             </span>
-
           </Link>
-
-
-          {/* ================= HEADING ================= */}
 
           <h1>
             Create an account
@@ -212,9 +169,6 @@ const Signup = () => {
             Join CampusHub to discover and
             participate in campus events.
           </p>
-
-
-          {/* ================= ROLE ================= */}
 
           <div className="role-section">
 
@@ -237,17 +191,13 @@ const Signup = () => {
                   handleRoleChange("student")
                 }
               >
-
                 <GraduationCap />
 
                 <span>
                   Student
                 </span>
-
               </button>
 
-
-              {/* FACULTY */}
 
               <button
                 type="button"
@@ -260,17 +210,12 @@ const Signup = () => {
                   handleRoleChange("faculty")
                 }
               >
-
                 <Briefcase />
 
                 <span>
                   Faculty
                 </span>
-
               </button>
-
-
-              {/* COORDINATOR */}
 
               <button
                 type="button"
@@ -283,17 +228,13 @@ const Signup = () => {
                   handleRoleChange("coordinator")
                 }
               >
-
                 <UserStar />
 
                 <span>
                   Coordinator
                 </span>
-
               </button>
 
-
-              {/* ADMIN */}
 
               <button
                 type="button"
@@ -306,26 +247,21 @@ const Signup = () => {
                   handleRoleChange("admin")
                 }
               >
-
                 <UserCog />
 
                 <span>
                   Admin
                 </span>
-
               </button>
 
             </div>
-
           </div>
 
 
-          {/* ================= FORM ================= */}
-
+    
           <form onSubmit={handleSubmit}>
 
-            {/* ================= FULL NAME ================= */}
-
+     
             <div className="input-group">
 
               <label>
@@ -347,13 +283,10 @@ const Signup = () => {
                 />
 
               </div>
-
             </div>
 
 
-            {/* ================= EMAIL ================= */}
-
-            <div className="input-group">
+              <div className="input-group">
 
               <label>
                 Email Address
@@ -374,11 +307,7 @@ const Signup = () => {
                 />
 
               </div>
-
             </div>
-
-
-            {/* ================= PASSWORD ================= */}
 
             <div className="input-group">
 
@@ -413,21 +342,15 @@ const Signup = () => {
                     )
                   }
                 >
-
                   {showPassword ? (
                     <EyeOff />
                   ) : (
                     <Eye />
                   )}
-
                 </button>
 
               </div>
-
             </div>
-
-
-            {/* ================= ADMIN ================= */}
 
             {role === "admin" && (
 
@@ -459,14 +382,9 @@ const Signup = () => {
 
             )}
 
-
-            {/* ================= STUDENT ================= */}
-
             {role === "student" && (
 
               <>
-
-                {/* PHONE */}
 
                 <div className="input-group">
 
@@ -494,9 +412,6 @@ const Signup = () => {
 
                 </div>
 
-
-                {/* COLLEGE */}
-
                 <div className="input-group">
 
                   <label>
@@ -523,89 +438,9 @@ const Signup = () => {
 
                 </div>
 
-
-                {/* ================= COURSE ================= */}
-
-                <div className="input-group">
-
-                  <label>
-                    Course
-                  </label>
-
-                  <div className="input-wrapper">
-
-                    <GraduationCap />
-
-                     <select
-                     className="signup-select"
-                     value={course}
-                     onChange={(e) => {
-                       setCourse(e.target.value);
-                       setYear("");
-                     }}
-                     required>
-                  
-                     <option value="">Select Course</option>
-
-                     <option value="MCA">MCA</option>
-                     <option value="BCA">BCA</option>
-                     <option value="BBA">BBA</option>
-                     <option value="BA ECO">BA ECO</option>
-                   </select>
-
-                  </div>
-
-                </div>
-
-                  {/* ================= YEAR ================= */}
-
-<div className="input-group">
-
-  <label>
-    Year
-  </label>
-
-  <div className="input-wrapper">
-
-    <GraduationCap />
-
-    <select
-      className="signup-select"
-      value={year}
-      onChange={(e) => setYear(e.target.value)}
-      required
-    >
-
-      <option value="">
-        Select Year
-      </option>
-
-      <option value="1st Year">
-        1st Year
-      </option>
-
-      <option value="2nd Year">
-        2nd Year
-      </option>
-
-      {course !== "MCA" && (
-        <option value="3rd Year">
-          3rd Year
-        </option>
-      )}
-
-    </select>
-
-  </div>
-
-</div>
-
               </>
 
             )}
-
-
-            {/* ================= DEPARTMENT ================= */}
 
             {(role === "student" ||
               role === "coordinator") && (
@@ -613,7 +448,7 @@ const Signup = () => {
               <div className="input-group">
 
                 <label>
-                  Department
+                  Course
                 </label>
 
                 <div className="input-wrapper">
@@ -622,41 +457,32 @@ const Signup = () => {
 
                   <select
                     className="signup-select"
-                    value={department}
-                    onChange={(e) =>
-                      setDepartment(
-                        e.target.value
-                      )
-                    }
+                    value={course}
+                    onChange={(e) => {
+                      setCourse(e.target.value);
+                      setYear("");
+                    }}
                     required
                   >
 
                     <option value="">
-                      Select Department
+                      Select Course
                     </option>
 
-                    <option value="CSE">
-                      CSE
+                    <option value="MCA">
+                      MCA
                     </option>
 
-                    <option value="IT">
-                      IT
+                    <option value="BCA">
+                      BCA
                     </option>
 
-                    <option value="ECE">
-                      ECE
+                    <option value="BBA">
+                      BBA
                     </option>
 
-                    <option value="EEE">
-                      EEE
-                    </option>
-
-                    <option value="ME">
-                      Mechanical
-                    </option>
-
-                    <option value="CE">
-                      Civil
+                    <option value="BA ECO">
+                      BA ECO
                     </option>
 
                   </select>
@@ -668,8 +494,53 @@ const Signup = () => {
             )}
 
 
-            {/* ================= SUBMIT ================= */}
+            {role === "student" && (
 
+              <div className="input-group">
+
+                <label>
+                  Year
+                </label>
+
+                <div className="input-wrapper">
+
+                  <GraduationCap />
+
+                  <select
+                    className="signup-select"
+                    value={year}
+                    onChange={(e) =>
+                      setYear(e.target.value)
+                    }
+                    required
+                  >
+
+                    <option value="">
+                      Select Year
+                    </option>
+
+                    <option value="1st Year">
+                      1st Year
+                    </option>
+
+                    <option value="2nd Year">
+                      2nd Year
+                    </option>
+
+
+                    {course !== "MCA" && (
+                      <option value="3rd Year">
+                        3rd Year
+                      </option>
+                    )}
+
+                  </select>
+
+                </div>
+
+              </div>
+
+            )}
             <button
               type="submit"
               className="submit-btn"
@@ -678,9 +549,6 @@ const Signup = () => {
             </button>
 
           </form>
-
-
-          {/* ================= LOGIN ================= */}
 
           <p className="login-link">
 
@@ -693,11 +561,7 @@ const Signup = () => {
           </p>
 
         </div>
-
       </div>
-
-
-      {/* ================= RIGHT SIDE ================= */}
 
       <div className="signup-illustration">
 

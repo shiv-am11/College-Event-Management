@@ -66,7 +66,7 @@ const CoordinatorEvents = () => {
         <h1>Events</h1>
 
         <p className="subtitle-event">
-          Discover and manage your department events.
+          Discover and manage your Course events.
         </p>
 
         {/* SEARCH */}
@@ -91,7 +91,7 @@ const CoordinatorEvents = () => {
           <p>{error}</p>
 
         ) : filteredEvents.length === 0 ? (
-          <p>No department events found.</p>
+          <p>No Course events found.</p>
 
         ) : (
 
@@ -99,8 +99,6 @@ const CoordinatorEvents = () => {
 
             {filteredEvents.map((event) => {
 
-              // Event schema mein field:
-              // registeredStudent
               const registered =
                 event.registeredStudent?.length || 0;
 

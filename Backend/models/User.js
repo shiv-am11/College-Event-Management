@@ -38,19 +38,13 @@ const userSchema = new mongoose.Schema({
         trim:true,
         enum:["MCA" ,"BCA", "BBA","BA ECO" ],
         required: function(){
-            return this.role === "student";
+            return this.role === "student" || this.role === "coordinator";
         }
     },
     role:{
         type: String,
         enum :["student" , "faculty" , "admin" , "coordinator"],
         default: "student"
-    },
-    department:{
-        type: String,
-        required : function(){
-            return this.role === "coordinator" || this.role=== "student";
-        }
     },
     year:{
         type:String,

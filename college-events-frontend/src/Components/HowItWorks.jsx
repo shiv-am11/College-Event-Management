@@ -13,7 +13,7 @@ export const steps = [
     step: 2,
     icon: Search,
     title: "Discover Events",
-    description: "Browse upcoming events, filter by category or department, and find activities that match your interests.",
+    description: "Browse upcoming events, filter by category or Course, and find activities that match your interests.",
   },
   {
     step: 3,

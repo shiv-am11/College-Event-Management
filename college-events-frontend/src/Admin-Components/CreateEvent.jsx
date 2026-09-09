@@ -9,24 +9,25 @@ import {
   Tag,
   Send,
   CheckCircle,
+  GraduationCap,
 } from "lucide-react";
 
 import DashboardLayout from "../Admin-Components/Layout/DashboardLayout";
 import "../CSS/CreateEvent.css";
 
-const categories = ["Tech", "Cultural", "Sports", "Career", "Other"];
-
-const departments = [
-  "CSE",
-  "IT",
-  "ECE",
-  "EEE",
-  "Mechanical",
-  "Civil",
-  "MBA",
-  "BCA",
-  "MCA",
+const categories = [
+  "Tech",
+  "Cultural",
+  "Sports",
+  "Career",
   "Other",
+];
+
+const courses = [
+  "MCA",
+  "BCA",
+  "BBA",
+  "BA ECO",
 ];
 
 export default function CreateEvent() {
@@ -34,7 +35,7 @@ export default function CreateEvent() {
     title: "",
     description: "",
     category: "",
-    department: "", 
+    course: "",
     date: "",
     time: "",
     venue: "",
@@ -46,6 +47,10 @@ export default function CreateEvent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // ==========================================
+  // HANDLE INPUT CHANGE
+  // ==========================================
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -54,6 +59,10 @@ export default function CreateEvent() {
       [name]: value,
     }));
   };
+
+  // ==========================================
+  // HANDLE IMAGE
+  // ==========================================
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -65,8 +74,14 @@ export default function CreateEvent() {
 
     if (file) {
       setPreview(URL.createObjectURL(file));
+    } else {
+      setPreview(null);
     }
   };
+
+  // ==========================================
+  // SUBMIT FORM
+  // ==========================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,6 +91,15 @@ export default function CreateEvent() {
 
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        alert("Please login first");
+        return;
+      }
+
+      // ==========================================
+      // FORM DATA
+      // ==========================================
+
       const data = new FormData();
 
       Object.keys(formData).forEach((key) => {
@@ -84,33 +108,51 @@ export default function CreateEvent() {
         }
       });
 
+      // ==========================================
+      // API REQUEST
+      // ==========================================
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/admin/events`,
         {
           method: "POST",
+
           headers: {
             Authorization: `Bearer ${token}`,
           },
+
           body: data,
         }
       );
 
       const result = await res.json();
 
+      // ==========================================
+      // ERROR
+      // ==========================================
+
       if (!res.ok) {
         console.log("Backend Error:", result);
 
-        alert(result.message || "Event creation failed");
+        alert(
+          result.message ||
+            "Event creation failed"
+        );
 
         return;
       }
+
+      // ==========================================
+      // SUCCESS
+      // ==========================================
+
       setShowSuccess(true);
 
       setFormData({
         title: "",
         description: "",
         category: "",
-        department: "",
+        course: "",
         date: "",
         time: "",
         venue: "",
@@ -120,13 +162,18 @@ export default function CreateEvent() {
 
       setPreview(null);
 
+      // Hide success message
       setTimeout(() => {
         setShowSuccess(false);
       }, 2500);
+
     } catch (err) {
       console.error("Fetch Error:", err);
 
-      alert("Server down or backend error");
+      alert(
+        "Server down or backend error"
+      );
+
     } finally {
       setIsSubmitting(false);
     }
@@ -134,25 +181,58 @@ export default function CreateEvent() {
 
   return (
     <DashboardLayout>
-      <form className="create-event" onSubmit={handleSubmit}>
+
+      <form
+        className="create-event"
+        onSubmit={handleSubmit}
+      >
+
+        {/* ==========================================
+            HEADER
+        ========================================== */}
+
         <div className="Cr-Event-header">
-          <h1>Create New Event</h1>
-          <p>Fill in the details to create a new event</p>
+
+          <h1>
+            Create New Event
+          </h1>
+
+          <p>
+            Fill in the details to create a new event
+          </p>
+
         </div>
+
+
+        {/* ==========================================
+            SUCCESS MESSAGE
+        ========================================== */}
 
         {showSuccess && (
           <div className="success-toast">
+
             <CheckCircle color="#6467f2" />
-            <span>Event created successfully!</span>
+
+            <span>
+              Event created successfully!
+            </span>
+
           </div>
         )}
 
+
         <div className="form-card">
 
-          {/* EVENT TITLE */}
+
+          {/* ==========================================
+              EVENT TITLE
+          ========================================== */}
+
           <div className="field">
+
             <label>
-              <FileText /> Event Title
+              <FileText />
+              Event Title
             </label>
 
             <input
@@ -161,12 +241,19 @@ export default function CreateEvent() {
               onChange={handleChange}
               required
             />
+
           </div>
 
-          {/* DESCRIPTION */}
+
+          {/* ==========================================
+              DESCRIPTION
+          ========================================== */}
+
           <div className="field">
+
             <label>
-              <FileText /> Description
+              <FileText />
+              Description
             </label>
 
             <textarea
@@ -175,12 +262,19 @@ export default function CreateEvent() {
               onChange={handleChange}
               required
             />
+
           </div>
 
-          {/* CATEGORY */}
+
+          {/* ==========================================
+              CATEGORY
+          ========================================== */}
+
           <div className="field">
+
             <label>
-              <Tag /> Category
+              <Tag />
+              Category
             </label>
 
             <select
@@ -189,42 +283,74 @@ export default function CreateEvent() {
               onChange={handleChange}
               required
             >
-              <option value="">Select category</option>
 
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
+              <option value="">
+                Select category
+              </option>
+
+              {categories.map((category) => (
+                <option
+                  key={category}
+                  value={category}
+                >
+                  {category}
                 </option>
               ))}
+
             </select>
+
           </div>
 
+
+          {/* ==========================================
+              COURSE
+          ========================================== */}
+
           <div className="field">
+
             <label>
-              <Tag /> Department
+              <GraduationCap />
+              Course
             </label>
 
             <select
-              name="department"
-              value={formData.department}
+              name="course"
+              value={formData.course}
               onChange={handleChange}
               required
             >
-              <option value="">Select department</option>
 
-              {departments.map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
+              <option value="">
+                Select course
+              </option>
+
+              {courses.map((course) => (
+                <option
+                  key={course}
+                  value={course}
+                >
+                  {course}
                 </option>
               ))}
+
             </select>
+
           </div>
 
-          {/* DATE & TIME */}
+
+          {/* ==========================================
+              DATE & TIME
+          ========================================== */}
+
           <div className="row">
+
+            {/* DATE */}
+
             <div className="field">
+
               <label>
-                <Calendar /> Date
+                <Calendar />
+                Date
               </label>
 
               <input
@@ -234,11 +360,17 @@ export default function CreateEvent() {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
+
+            {/* TIME */}
+
             <div className="field">
+
               <label>
-                <Clock /> Time
+                <Clock />
+                Time
               </label>
 
               <input
@@ -248,14 +380,25 @@ export default function CreateEvent() {
                 onChange={handleChange}
                 required
               />
+
             </div>
+
           </div>
 
-          {/* VENUE & CAPACITY */}
+
+          {/* ==========================================
+              VENUE & CAPACITY
+          ========================================== */}
+
           <div className="row">
+
+            {/* VENUE */}
+
             <div className="field">
+
               <label>
-                <MapPin /> Venue
+                <MapPin />
+                Venue
               </label>
 
               <input
@@ -264,11 +407,17 @@ export default function CreateEvent() {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
+
+            {/* CAPACITY */}
+
             <div className="field">
+
               <label>
-                <Users /> Capacity
+                <Users />
+                Capacity
               </label>
 
               <input
@@ -276,15 +425,24 @@ export default function CreateEvent() {
                 name="capacity"
                 value={formData.capacity}
                 onChange={handleChange}
+                min="1"
                 required
               />
+
             </div>
+
           </div>
 
-          {/* IMAGE */}
+
+          {/* ==========================================
+              IMAGE
+          ========================================== */}
+
           <div className="field">
+
             <label>
-              <Image /> Event Image
+              <Image />
+              Event Image
             </label>
 
             <input
@@ -306,26 +464,39 @@ export default function CreateEvent() {
                 }}
               />
             )}
+
           </div>
 
-          {/* BUTTON */}
+
+          {/* ==========================================
+              BUTTON
+          ========================================== */}
+
           <div className="buttons">
+
             <button
               className="EC-publish"
               type="submit"
               disabled={isSubmitting}
             >
+
               {isSubmitting ? (
                 "Publishing..."
               ) : (
                 <>
-                  <Send /> Publish Event
+                  <Send />
+                  Publish Event
                 </>
               )}
+
             </button>
+
           </div>
+
         </div>
+
       </form>
+
     </DashboardLayout>
   );
 }

@@ -15,6 +15,7 @@ router.post(
   async (req, res) => {
     try {
       let imageUrl = "";
+
       const {
         title,
         description,
@@ -22,7 +23,7 @@ router.post(
         time,
         venue,
         category,
-        department, 
+        course,
         capacity,
       } = req.body || {};
 
@@ -32,16 +33,24 @@ router.post(
         !time ||
         !venue?.trim() ||
         !capacity ||
-        !department?.trim()
+        !course?.trim()
       ) {
         return res.status(400).json({
           success: false,
           message: "All fields are required!",
         });
       }
-      if(!Number.isInteger(Number(capacity)) || Number(capacity) <= 0){
-        return res.status(400).json({success:false , message:"Capacity must be positive number"})
+
+      if (
+        !Number.isInteger(Number(capacity)) ||
+        Number(capacity) <= 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Capacity must be positive number",
+        });
       }
+
       if (req.file) {
         imageUrl = await uploadFile(req.file);
       }
@@ -53,7 +62,7 @@ router.post(
         time,
         venue,
         category,
-        department, 
+        course,
         capacity,
         image: imageUrl,
         status: "approved",
@@ -66,6 +75,7 @@ router.post(
         message: "Event created successfully",
         event: newEvent,
       });
+
     } catch (err) {
       console.log("CREATE EVENT ERROR:", err);
 
@@ -77,60 +87,87 @@ router.post(
   }
 );
 
-router.get("/events", protect, allowRoles("admin"), async (req, res) => {
-  try {
-    const events = await Event.find().sort({ date: 1 });
+router.get(
+  "/events",
+  protect,
+  allowRoles("admin"),
+  async (req, res) => {
+    try {
+      const events = await Event.find().sort({ date: 1 });
 
-    res.json({
-      success: true,
-      events,
-    });
-  } catch (err) {
-    console.log("GET EVENTS ERROR ", err);
+      res.json({
+        success: true,
+        events,
+      });
 
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    } catch (err) {
+      console.log("GET EVENTS ERROR ", err);
+
+      res.status(500).json({
+        success: false,
+        message: err.message,
+      });
+    }
   }
-});
+);
+router.put(
+  "/events/:id",
+  protect,
+  allowRoles("admin"),
+  async (req, res) => {
+    try {
+      const event = await Event.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
 
-router.put("/events/:id", protect, allowRoles("admin"), async (req, res) => {
-  try {
-    const event = await Event.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
+      if (!event) {
+        return res.status(404).json({
+          success: false,
+          message: "Event not found",
+        });
       }
-    );
 
-    res.json({
-      success: true,
-      message: "Event updated successfully",
-      event,
-    });
-  } catch (err) {
-    console.log("UPDATE EVENT ERROR ", err);
+      res.json({
+        success: true,
+        message: "Event updated successfully",
+        event,
+      });
 
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    } catch (err) {
+      console.log("UPDATE EVENT ERROR ", err);
+
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
   }
-});
+);
 router.delete(
   "/events/:id",
   protect,
   allowRoles("admin"),
   async (req, res) => {
     try {
-      await Event.findByIdAndDelete(req.params.id);
+      const event = await Event.findByIdAndDelete(req.params.id);
+
+      if (!event) {
+        return res.status(404).json({
+          success: false,
+          message: "Event not found",
+        });
+      }
 
       res.json({
         success: true,
         message: "Event deleted successfully",
       });
+
     } catch (err) {
       console.log("DELETE EVENT ERROR ", err);
 
@@ -141,6 +178,7 @@ router.delete(
     }
   }
 );
+
 router.get(
   "/event/:id/registrations",
   protect,
@@ -151,7 +189,7 @@ router.get(
 
       const event = await Event.findById(req.params.id).populate({
         path: "registeredStudent",
-        select: "name email phone college",
+        select: "name email phone college course year",
       });
 
       if (!event) {
@@ -165,6 +203,7 @@ router.get(
         total: event.registeredStudent.length,
         students: event.registeredStudent,
       });
+
     } catch (err) {
       console.error("BACKEND ERROR:", err);
 
@@ -174,5 +213,6 @@ router.get(
     }
   }
 );
+
 
 module.exports = router;
