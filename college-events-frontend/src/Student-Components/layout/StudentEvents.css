@@ -136,3 +136,401 @@ select {
   cursor: not-allowed;
   opacity: 0.6;
 }
+.view-details-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 11px 16px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.view-details-btn:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(79, 70, 229, 0.2);
+}
+
+
+/* =========================================
+   MODAL OVERLAY
+========================================= */
+
+.event-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(15, 23, 42, 0.55);
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  z-index: 9999;
+
+  animation: overlayShow 0.25s ease;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.event-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 520px;
+
+  background: #ffffff;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+
+  display: flex;
+  flex-direction: column;
+
+  animation: modalShow 0.3s ease;
+}
+
+
+/* =========================================
+   CLOSE BUTTON
+========================================= */
+
+.modal-close {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #f1f5f9;
+
+  color: #475569;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  z-index: 5;
+
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: #e2e8f0;
+
+  transform: rotate(90deg);
+}
+
+
+/* =========================================
+   MODAL BODY
+========================================= */
+
+.modal-body {
+  padding: 32px 28px 28px;
+
+  min-height: 180px;
+}
+
+.modal-body h2 {
+  margin: 0 45px 22px 0;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  color: #4f46e5;
+
+  position: relative;
+}
+
+
+/* Highlight line */
+
+.modal-body h2::after {
+  content: "";
+
+  display: block;
+
+  width: 55px;
+  height: 3px;
+
+  margin-top: 8px;
+
+  border-radius: 10px;
+
+  background: #4f46e5;
+}
+
+
+/* =========================================
+   INSTRUCTIONS LIST
+========================================= */
+
+.instructions-list {
+  margin: 0;
+
+  padding-left: 22px;
+
+  color: #475569;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+.instructions-list li {
+  padding-left: 5px;
+
+  margin-bottom: 9px;
+}
+
+.instructions-list li:last-child {
+  margin-bottom: 0;
+}
+
+.instructions-list li::marker {
+  color: #4f46e5;
+
+  font-weight: 700;
+}
+
+
+/* No instructions */
+
+.no-instructions {
+  margin: 0;
+
+  color: #94a3b8;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   MODAL FOOTER
+========================================= */
+
+.modal-footer {
+  padding: 16px 28px 22px;
+
+  border-top: 1px solid #e2e8f0;
+
+  background: #ffffff;
+}
+
+
+/* =========================================
+   REGISTER NOW BUTTON
+========================================= */
+
+.modal-register-btn {
+  position: relative;
+
+  width: 100%;
+  height: 48px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #4f46e5;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.modal-register-btn:hover:not(:disabled) {
+  background: #4338ca;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   EVENT FULL
+========================================= */
+
+.modal-register-btn.full {
+  background: #94a3b8;
+
+  color: #ffffff;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   REGISTERED BUTTON
+========================================= */
+
+.modal-register-btn.registered {
+  background: #64748b;
+
+  color: #ffffff;
+
+  cursor: default;
+
+  overflow: hidden;
+}
+
+
+/* Registered text */
+
+.registered-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  transition: opacity 0.2s ease;
+}
+
+
+/* =========================================
+   CANCEL HOVER TEXT
+========================================= */
+
+.cancel-hover {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  opacity: 0;
+
+  transform: translateY(5px);
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+/* Registered hover */
+
+.modal-register-btn.registered:hover {
+  background: #ef4444;
+}
+
+.modal-register-btn.registered:hover .registered-text {
+  opacity: 0;
+}
+
+.modal-register-btn.registered:hover .cancel-hover {
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+
+/* =========================================
+   MODAL ANIMATIONS
+========================================= */
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalShow {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(20px)
+      scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================
+   MOBILE RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+
+  .event-modal-overlay {
+    padding: 14px;
+  }
+
+  .event-modal {
+    max-width: 100%;
+
+    border-radius: 15px;
+  }
+
+  .modal-body2 {
+    padding: 28px 20px 22px;
+  }
+
+  .modal-body2 h2 {
+    color: black;
+    font-size: 21px;
+  }
+
+  .modal-footer {
+    padding: 14px 20px 18px;
+  }
+
+  .modal-register-btn {
+    height: 46px;
+  }
+}

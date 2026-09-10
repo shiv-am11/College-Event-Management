@@ -21,6 +21,7 @@ export default function CoordinatorCreateEvent() {
     title: "",
     description: "",
     category: "",
+    instructions: "",
     date: "",
     time: "",
     venue: "",
@@ -62,6 +63,11 @@ export default function CoordinatorCreateEvent() {
 
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        alert("Please login first");
+        return;
+      }
+
       const data = new FormData();
 
       Object.keys(formData).forEach((key) => {
@@ -71,7 +77,7 @@ export default function CoordinatorCreateEvent() {
       });
 
       const res = await fetch(
-        `http://localhost:3000/api/coordinator/createEvent-coordinator`,
+        "http://localhost:3000/api/coordinator/createEvent-coordinator",
         {
           method: "POST",
           headers: {
@@ -95,6 +101,7 @@ export default function CoordinatorCreateEvent() {
         title: "",
         description: "",
         category: "",
+        instructions: "",
         date: "",
         time: "",
         venue: "",
@@ -145,7 +152,8 @@ export default function CoordinatorCreateEvent() {
               required
             />
           </div>
-          
+
+          {/* DESCRIPTION */}
           <div className="field">
             <label>
               <FileText /> Description
@@ -181,6 +189,21 @@ export default function CoordinatorCreateEvent() {
             </select>
           </div>
 
+          {/* INSTRUCTIONS */}
+          <div className="field">
+            <label>
+              <FileText /> Instructions
+            </label>
+
+            <textarea
+              name="instructions"
+              value={formData.instructions}
+              onChange={handleChange}
+              placeholder="Enter instructions for students..."
+            />
+          </div>
+
+          {/* DATE & TIME */}
           <div className="row">
             <div className="field">
               <label>
@@ -236,6 +259,7 @@ export default function CoordinatorCreateEvent() {
                 name="capacity"
                 value={formData.capacity}
                 onChange={handleChange}
+                min="1"
                 required
               />
             </div>
@@ -279,11 +303,13 @@ export default function CoordinatorCreateEvent() {
                 "Publishing..."
               ) : (
                 <>
-                  <Send /> Publish Event
+                  <Send />
+                  Publish Event
                 </>
               )}
             </button>
           </div>
+
         </div>
       </form>
     </DashboardLayout>

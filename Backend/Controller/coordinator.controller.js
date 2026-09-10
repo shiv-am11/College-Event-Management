@@ -124,7 +124,8 @@ const createCoordinatorEvent = async (req, res) => {
       time,
       venue,
       category,
-      capacity
+      capacity,
+      instructions,
     } = req.body;
 
     if (
@@ -161,6 +162,7 @@ const createCoordinatorEvent = async (req, res) => {
       time,
       venue,
       category,
+      instructions,
       course: req.user.course,
 
       capacity,

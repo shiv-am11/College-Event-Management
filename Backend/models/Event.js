@@ -43,6 +43,11 @@ const EventSchema = new mongoose.Schema({
     enum: ["pending", "approved", "rejected"],
     default: "approved"
   },
+  instructions: {
+  type: String,
+  trim:true,
+  default: "",
+  },
 
   registeredStudent: {
     type: [mongoose.Schema.Types.ObjectId],
