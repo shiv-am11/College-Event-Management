@@ -21,30 +21,45 @@ const departmentStudents = async (req, res) => {
 };
 const getStudentFromEvents = async (req, res) => {
   try {
-    const fetchStudent = await Event.findOne({
+    const event = await Event.findOne({
       _id: req.params.id,
-      course: req.user.course
-    }).populate(
-      "registeredStudent",
-      "name email course year"
-    );
+      course: req.user.course,
+    })
+      .populate("registeredStudent", "name email course year phone college")
+      .populate("attendedStudents", "_id");
 
-    if (!fetchStudent) {
+    if (!event) {
       return res.status(404).json({
-        message: "Event not found or you don't have access to this event"
+        message: "Event not found or you don't have access to this event",
       });
     }
 
-    const courseStudents = fetchStudent.registeredStudent.filter(
-      (student) => student.course === req.user.course
+    const attendedIds = new Set(
+      (event.attendedStudents || []).map(
+        (student) => student._id.toString()
+      )
     );
 
-    res.json(courseStudents);
+    const students = event.registeredStudent
+      .filter((student) => student.course === req.user.course)
+      .map((student) => ({
+        _id: student._id,
+        name: student.name,
+        email: student.email,
+        course: student.course,
+        year: student.year,
+        phone: student.phone || "N/A",
+        college: student.college || "N/A",
+        status: attendedIds.has(student._id.toString())
+          ? "Attended"
+          : "Registered",
+      }));
 
+    return res.json(students);
   } catch (err) {
     console.log(err.message);
     return res.status(500).json({
-      message: "Something went wrong!"
+      message: "Something went wrong!",
     });
   }
 };
@@ -185,6 +200,58 @@ const createCoordinatorEvent = async (req, res) => {
     });
   }
 };
+const markAttendance = async (req, res) => {
+  try {
+    const { id, studentId } = req.params;
+
+    const event = await Event.findOne({
+      _id: id,
+      course: req.user.course,
+    }).select("registeredStudent attendedStudents");
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found or access denied",
+      });
+    }
+
+    const isRegistered = event.registeredStudent.some(
+      (registeredId) => registeredId.toString() === studentId
+    );
+
+    if (!isRegistered) {
+      return res.status(400).json({
+        message: "Student is not registered for this event",
+      });
+    }
+
+    const alreadyAttended = event.attendedStudents.some(
+      (attendedId) => attendedId.toString() === studentId
+    );
+
+    if (alreadyAttended) {
+      return res.status(200).json({
+        success: true,
+        message: "Attendance is already marked",
+      });
+    }
+
+    event.attendedStudents.addToSet(studentId);
+    await event.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Attendance marked successfully",
+      studentId,
+      status: "Attended",
+    });
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({
+      message: "Something went wrong!",
+    });
+  }
+}; 
 
 
 module.exports = {
@@ -192,5 +259,6 @@ module.exports = {
   getStudentFromEvents,
   coordinatorEvents,
   getDashboardStats,
-  createCoordinatorEvent
+  createCoordinatorEvent,
+  markAttendance
 };
