@@ -48,6 +48,10 @@ const EventSchema = new mongoose.Schema({
   trim:true,
   default: "",
   },
+  whatsappLink: {
+  type: String,
+  default: ""
+  },
 
   registeredStudent: {
     type: [mongoose.Schema.Types.ObjectId],

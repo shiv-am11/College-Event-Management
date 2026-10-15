@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Event = require("../models/Event");
 const uploadFile = require("../config/imageKit");
+const sendEventEmail = require("../config/sendEventEmail");
 
 
 const departmentStudents = async (req, res) => {
@@ -141,6 +142,7 @@ const createCoordinatorEvent = async (req, res) => {
       category,
       capacity,
       instructions,
+      whatsappLink,
     } = req.body;
 
     if (
@@ -152,24 +154,31 @@ const createCoordinatorEvent = async (req, res) => {
       !capacity
     ) {
       return res.status(400).json({
-        message: "All fields are required!"
+        message: "All required fields must be filled!",
       });
     }
-
     if (
       !Number.isInteger(Number(capacity)) ||
       Number(capacity) <= 0
     ) {
       return res.status(400).json({
         success: false,
-        message: "Capacity must be positive number"
+        message: "Capacity must be a positive number",
       });
     }
-
+    if (
+  whatsappLink &&
+  !/^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9]+\/?$/.test(
+    whatsappLink.trim()
+  )
+) {
+  return res.status(400).json({
+    message: "Please enter a valid WhatsApp group invitation link",
+  });
+}
     if (req.file) {
       imageUrl = await uploadFile(req.file);
     }
-
     const newEvent = new Event({
       title,
       description,
@@ -178,28 +187,40 @@ const createCoordinatorEvent = async (req, res) => {
       venue,
       category,
       instructions,
+      whatsappLink: whatsappLink?.trim() || "",
       course: req.user.course,
-
-      capacity,
+      capacity: Number(capacity),
       image: imageUrl,
-      status: "approved"
+      status: "approved",
     });
 
     await newEvent.save();
 
-    return res.status(201).json({
-      message: "Event created successfully",
-      newEvent
-    });
+    try {
+  const students = await User.find({
+    role: "student",
+    course: req.user.course,
+  }).select("name email");
 
+  await sendEventEmail(students, newEvent);
+} catch (emailError) {
+  // Email failure should not undo event creation
+  console.error("Event created, but email failed:", emailError.message);
+}
+
+return res.status(201).json({
+  message: "Event created successfully",
+  newEvent,
+});
   } catch (err) {
     console.log(err.message);
 
     return res.status(500).json({
-      message: "Something went wrong!"
+      message: "Something went wrong!",
     });
   }
 };
+
 const markAttendance = async (req, res) => {
   try {
     const { id, studentId } = req.params;
@@ -251,7 +272,9 @@ const markAttendance = async (req, res) => {
       message: "Something went wrong!",
     });
   }
-}; 
+};
+
+
 
 
 module.exports = {

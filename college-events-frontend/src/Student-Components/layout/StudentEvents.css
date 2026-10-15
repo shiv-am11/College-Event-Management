@@ -534,3 +534,76 @@ select {
     height: 46px;
   }
 }
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.whatsapp-join-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background-color: #25d366;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.whatsapp-join-btn:hover {
+  background-color: #1eae54;
+}
+
+.whatsapp-join-btn:focus-visible {
+  outline: 3px solid #128c7e;
+  outline-offset: 3px;
+}
+
+
+.registered-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.modal-register-btn.registered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #e5e7eb;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.whatsapp-join-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #16a34a;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.whatsapp-join-btn:hover {
+  background: #15803d;
+}

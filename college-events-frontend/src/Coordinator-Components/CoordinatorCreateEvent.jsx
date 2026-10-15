@@ -9,6 +9,7 @@ import {
   Tag,
   Send,
   CheckCircle,
+  MessageCircle,
 } from "lucide-react";
 
 import DashboardLayout from "../Coordinator-Components/layout/CoordinatorDashLayout";
@@ -26,6 +27,7 @@ export default function CoordinatorCreateEvent() {
     time: "",
     venue: "",
     capacity: "",
+    whatsappLink: "",
     image: null,
   });
 
@@ -47,11 +49,13 @@ export default function CoordinatorCreateEvent() {
 
     setFormData((prev) => ({
       ...prev,
-      image: file,
+      image: file || null,
     }));
 
     if (file) {
       setPreview(URL.createObjectURL(file));
+    } else {
+      setPreview(null);
     }
   };
 
@@ -71,7 +75,7 @@ export default function CoordinatorCreateEvent() {
       const data = new FormData();
 
       Object.keys(formData).forEach((key) => {
-        if (formData[key]) {
+        if (formData[key] !== null && formData[key] !== "") {
           data.append(key, formData[key]);
         }
       });
@@ -106,10 +110,14 @@ export default function CoordinatorCreateEvent() {
         time: "",
         venue: "",
         capacity: "",
+        whatsappLink: "",
         image: null,
       });
 
       setPreview(null);
+
+      // Reset file input
+      e.target.reset();
 
       setTimeout(() => {
         setShowSuccess(false);
@@ -138,7 +146,6 @@ export default function CoordinatorCreateEvent() {
         )}
 
         <div className="form-card">
-
           {/* EVENT TITLE */}
           <div className="field">
             <label>
@@ -201,6 +208,26 @@ export default function CoordinatorCreateEvent() {
               onChange={handleChange}
               placeholder="Enter instructions for students..."
             />
+          </div>
+
+          {/* WHATSAPP GROUP LINK */}
+          <div className="field">
+            <label>
+              <MessageCircle color="#25D366" /> WhatsApp Group Link
+            </label>
+
+            <input
+              type="url"
+              name="whatsappLink"
+              value={formData.whatsappLink}
+              onChange={handleChange}
+              placeholder="https://chat.whatsapp.com/..."
+            />
+
+            <small>
+              Add the event's WhatsApp group invitation link.
+              Students can join after registering.
+            </small>
           </div>
 
           {/* DATE & TIME */}
@@ -282,7 +309,7 @@ export default function CoordinatorCreateEvent() {
             {preview && (
               <img
                 src={preview}
-                alt="preview"
+                alt="Event preview"
                 style={{
                   width: "200px",
                   marginTop: "10px",
@@ -309,7 +336,6 @@ export default function CoordinatorCreateEvent() {
               )}
             </button>
           </div>
-
         </div>
       </form>
     </DashboardLayout>
