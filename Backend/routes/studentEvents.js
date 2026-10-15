@@ -1,64 +1,122 @@
+
 const express = require("express");
+const mongoose = require("mongoose");
 const Event = require("../models/Event");
 const protect = require("../Middleware/authMiddleware");
 
 const router = express.Router();
 
-router.get("/events", async (req, res) => {
+router.get("/events", protect, async (req, res) => {
   try {
-    const events = await Event.find({ status: "approved" });
-    res.json({ events });
+    const studentId = req.user._id;
+
+    const events = await Event.find({
+      status: "approved",
+    }).lean();
+
+    const updatedEvents = events.map((event) => {
+      const registeredStudents = event.registeredStudent || [];
+
+      const isRegistered = registeredStudents.some(
+        (id) => id.toString() === studentId.toString()
+      );
+
+      return {
+        ...event,
+        isRegistered,
+        whatsappLink: event.whatsappLink || "",
+      };
+    });
+
+    return res.status(200).json({
+      events: updatedEvents,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Fetch student events error:", err);
+    return res.status(500).json({
+      message: "Failed to fetch events",
+    });
   }
 });
 
 router.post("/events/:id/register", protect, async (req, res) => {
   try {
-    const studentId = req.user._id; 
+    const studentId = req.user._id;
     const eventId = req.params.id;
 
-    const event = await Event.findById(eventId);
-
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        message: "Invalid event ID",
+      });
     }
-     if(event.registeredStudent.includes(studentId)){
-      return res.status(400).json({message : "Already registered ✅"})
-     }
 
-    if (event.attendees >= event.capacity) {
-      return res.status(400).json({ message: "Event is full" });
-    }
-    event.registeredStudent.push(studentId);
-    event.attendees +=1;
-
-    await event.save();
-    
-    res.json({
-      message: "Registered successfully",
-      event
+    const event = await Event.findOne({
+      _id: eventId,
+      status: "approved",
     });
 
+    if (!event) {
+      return res.status(404).json({
+        message: "Approved event not found",
+      });
+    }
+    const alreadyRegistered = (event.registeredStudent || []).some(
+      (id) => id.toString() === studentId.toString()
+    );
+
+    if (alreadyRegistered) {
+      return res.status(409).json({
+        message: "Already registered",
+        isRegistered: true,
+      });
+    }
+
+    if (
+      event.capacity != null &&
+      event.attendees >= event.capacity
+    ) {
+      return res.status(400).json({
+        message: "Event is full",
+      });
+    }
+
+    event.registeredStudent.push(studentId);
+    event.attendees = (event.attendees || 0) + 1;
+
+    await event.save();
+
+    return res.status(200).json({
+      message: "Registered successfully",
+      isRegistered: true,
+      event,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Event registration error:", err);
+
+    return res.status(500).json({
+      message: "Registration failed",
+    });
   }
 });
+
 router.get("/my-events", protect, async (req, res) => {
   try {
     const studentId = req.user._id;
 
     const events = await Event.find({
-      registeredStudent: studentId
-    }).select("title date venue category");
+      registeredStudent: studentId,
+    }).select(
+      "title description date time venue category image whatsappLink"
+    );
 
-    res.json(events);
-
+    return res.status(200).json(events);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    console.error("Fetch my events error:", err);
+
+    return res.status(500).json({
+      message: "Failed to fetch registered events",
+    });
   }
 });
+
 module.exports = router;

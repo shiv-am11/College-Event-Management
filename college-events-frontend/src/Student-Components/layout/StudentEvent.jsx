@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import {
   Search,
@@ -25,6 +25,24 @@ const getStudentId = (student) => {
   return String(student._id || student.id || student);
 };
 
+// Read the student ID from the JWT payload.
+// The backend must still validate the token.
+const getStudentIdFromToken = () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return "";
+
+    const payload = token.split(".")[1];
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = JSON.parse(atob(normalized));
+
+    return String(decoded.id || decoded._id || decoded.userId || "");
+  } catch (error) {
+    console.error("Unable to read student ID from token.");
+    return "";
+  }
+};
+
 const StudentEvents = () => {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
@@ -33,20 +51,28 @@ const StudentEvents = () => {
   const [registering, setRegistering] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const userId = localStorage.getItem("userId");
+  const userId = getStudentIdFromToken();
 
-  // Fetch events from the backend.
-  const fetchEvents = async () => {
+  // Fetch events and registration status from the backend.
+  const fetchEvents = useCallback(async () => {
+    setLoading(true);
+
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        setEvents([]);
+        console.error("No login token found.");
+        return;
+      }
+
       const res = await axios.get(`${API_URL}/api/student/events`, {
-        headers: token
-          ? { Authorization: `Bearer ${token}` }
-          : {},
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      const eventList = Array.isArray(res.data.events)
+      const eventList = Array.isArray(res.data?.events)
         ? res.data.events
         : Array.isArray(res.data)
           ? res.data
@@ -54,7 +80,7 @@ const StudentEvents = () => {
 
       setEvents(eventList);
 
-      // Keep the currently opened modal in sync with refreshed data.
+      // Keep the open modal synced with the latest server data.
       setSelectedEvent((current) => {
         if (!current) return null;
 
@@ -72,11 +98,11 @@ const StudentEvents = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   const filteredEvents = events.filter((event) => {
     const matchSearch = (event.title || "")
@@ -89,23 +115,27 @@ const StudentEvents = () => {
     return matchSearch && matchCategory;
   });
 
-  // Check if the logged-in student is already registered.
+  // Backend registration status takes priority.
   const isRegistered = (event) => {
-    if (!event || !userId) return false;
+    if (!event) return false;
 
-    if (
-      event.isRegistered === true ||
-      event.registered === true
-    ) {
-      return true;
+    if (typeof event.isRegistered === "boolean") {
+      return event.isRegistered;
+    }
+
+    if (typeof event.registered === "boolean") {
+      return event.registered;
     }
 
     const registeredStudents = Array.isArray(event.registeredStudent)
       ? event.registeredStudent
       : [];
 
-    return registeredStudents.some(
-      (student) => getStudentId(student) === String(userId)
+    return (
+      !!userId &&
+      registeredStudents.some(
+        (student) => getStudentId(student) === userId
+      )
     );
   };
 
@@ -119,7 +149,10 @@ const StudentEvents = () => {
   const handleRegister = async (eventId) => {
     if (registering) return;
 
-    if (!userId) {
+    const token = localStorage.getItem("token");
+
+    // Check the token, not localStorage.userId.
+    if (!token) {
       alert("Please log in again to register for this event.");
       return;
     }
@@ -130,14 +163,14 @@ const StudentEvents = () => {
 
     if (!event) return;
 
-    // Prevent another registration attempt from the current UI.
     if (isRegistered(event)) {
       alert("You are already registered for this event.");
       return;
     }
 
     if (
-      Number(event.attendees || 0) >= Number(event.capacity || 0)
+      Number(event.capacity || 0) > 0 &&
+      Number(event.attendees || 0) >= Number(event.capacity)
     ) {
       alert("Sorry, this event is full.");
       return;
@@ -145,8 +178,6 @@ const StudentEvents = () => {
 
     try {
       setRegistering(true);
-
-      const token = localStorage.getItem("token");
 
       const res = await fetch(
         `${API_URL}/api/student/events/${eventId}/register`,
@@ -158,35 +189,59 @@ const StudentEvents = () => {
         }
       );
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        // Refresh in case the backend reports an existing registration.
+        // A previous registration may already exist in the database.
         if (
           res.status === 400 ||
-          res.status === 409
+          res.status === 409 ||
+          /already registered|already applied/i.test(data.message || "")
         ) {
           await fetchEvents();
+
+          const latestEvent = events.find(
+            (item) => String(item._id) === String(eventId)
+          );
+
+          // Refresh the current event from the backend.
+          if (latestEvent) {
+            setSelectedEvent((current) =>
+              current && String(current._id) === String(eventId)
+                ? {
+                    ...current,
+                    isRegistered: true,
+                  }
+                : current
+            );
+          }
+
+          alert("You are already registered for this event.");
+          return;
+        }
+
+        if (res.status === 401 || res.status === 403) {
+          alert("Your session has expired. Please log in again.");
+          return;
         }
 
         alert(data.message || "Registration failed.");
         return;
       }
 
-      // Update local state immediately after successful registration.
+      // Update the UI immediately after successful registration.
       const updatedEvent = {
         ...event,
+        ...(data.event || {}),
         attendees:
           data.event?.attendees ??
           data.attendees ??
           Number(event.attendees || 0) + 1,
-        registeredStudent: [
-          ...(event.registeredStudent || []).filter(
-            (student) => getStudentId(student) !== String(userId)
-          ),
-          userId,
-        ],
         isRegistered: true,
+        registeredStudent: [
+          ...(event.registeredStudent || []),
+          ...(userId ? [userId] : []),
+        ],
       };
 
       setEvents((previousEvents) =>
@@ -205,14 +260,10 @@ const StudentEvents = () => {
 
       alert("Registered successfully!");
 
-      // Refresh from the backend to sync the final server state.
+      // Fetch the confirmed status and WhatsApp link from the server.
       await fetchEvents();
     } catch (err) {
-      console.error(
-        "Registration error:",
-        err.response?.data || err.message
-      );
-
+      console.error("Registration error:", err);
       alert("Error registering. Please try again.");
     } finally {
       setRegistering(false);
@@ -265,29 +316,20 @@ const StudentEvents = () => {
               <div className="events-grid">
                 {filteredEvents.map((event) => (
                   <div key={event._id} className="event-card">
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                    />
+                    <img src={event.image} alt={event.title} />
 
                     <div className="event-content">
-                      <span className="badge">
-                        {event.category}
-                      </span>
+                      <span className="badge">{event.category}</span>
 
                       <h3>{event.title}</h3>
 
-                      <p className="desc">
-                        {event.description}
-                      </p>
+                      <p className="desc">{event.description}</p>
 
                       <div className="info">
                         <span>
                           <Calendar size={14} />
                           {event.date
-                            ? new Date(event.date).toLocaleDateString(
-                                "en-IN"
-                              )
+                            ? new Date(event.date).toLocaleDateString("en-IN")
                             : "Date TBA"}
                         </span>
 
@@ -353,9 +395,7 @@ const StudentEvents = () => {
                     .split(/\r?\n/)
                     .filter((instruction) => instruction.trim())
                     .map((instruction, index) => (
-                      <li key={index}>
-                        {instruction.trim()}
-                      </li>
+                      <li key={index}>{instruction.trim()}</li>
                     ))}
                 </ul>
               ) : (
@@ -389,8 +429,9 @@ const StudentEvents = () => {
                     </a>
                   )}
                 </div>
-              ) : Number(selectedEvent.attendees || 0) >=
-                Number(selectedEvent.capacity || 0) ? (
+              ) : Number(selectedEvent.capacity || 0) > 0 &&
+                Number(selectedEvent.attendees || 0) >=
+                  Number(selectedEvent.capacity) ? (
                 <button
                   className="modal-register-btn full"
                   disabled
