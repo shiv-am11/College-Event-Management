@@ -54,8 +54,5 @@ CampusHub Team
     `Event notification submitted to email service. Message ID: ${info.messageId}`
   );
 };
-transporter.verify()
-  .then(() => console.log("Gmail SMTP connection successful"))
-  .catch((err) => console.error("Gmail SMTP error:", err.message));
 
 module.exports = sendEventEmail;

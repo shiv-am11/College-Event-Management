@@ -9,7 +9,7 @@ const {
     getDashboardStats,
     createCoordinatorEvent,
     markAttendance,
-} = require("../Controller/coordinator.controller");
+} = require("../Controller/coordinatorController");
 const upload = require("../Middleware/upload");
 
 const router = express.Router();
@@ -20,4 +20,5 @@ router.get("/events" ,protect,allowRoles("coordinator"),coordinatorEvents)
 router.get("/dashboard-stats" ,protect,allowRoles("coordinator"),getDashboardStats)
 router.post("/createEvent-coordinator", protect,allowRoles("coordinator"),upload.single("image"),createCoordinatorEvent)
 router.patch("/event/:id/students/:studentId/attendance",protect,allowRoles("coordinator"),markAttendance)
+router.get("/department-students", protect, departmentStudents);
 module.exports =router;

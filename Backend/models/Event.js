@@ -13,8 +13,20 @@ const EventSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  time: {
+  type: String,
+  default: "",
+},
 
-  time: String,
+startTime: {
+  type: String,
+  default: "",
+},
+
+endTime: {
+  type: String,
+  default: "",
+},
 
   venue: String,
 
