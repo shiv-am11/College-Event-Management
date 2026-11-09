@@ -2,6 +2,9 @@ const Notification = require("../models/Notification");
 
 exports.getNotifications = async (req, res) => {
   try {
+    console.log("Notification API called");
+    console.log("Logged in user:", req.user?._id);
+
     const notifications = await Notification.find({
       recipient: req.user._id,
     })
@@ -18,7 +21,10 @@ exports.getNotifications = async (req, res) => {
       notifications,
       unreadCount,
     });
+
   } catch (error) {
+    console.error("GET NOTIFICATIONS ERROR:", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
