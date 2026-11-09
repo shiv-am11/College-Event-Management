@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { json } = require("express");
 
 const protect = async (req, res, next) => {
   let token;
@@ -20,8 +21,8 @@ const protect = async (req, res, next) => {
 
     const user = await User.findById(decoded?.id).select("-password");
     if(!user){
-        throw new ApiError(401 ,"Invalid Token")
-    }
+        return res.status(401).json({message: "Invalid Token"})
+    };
     req.user = user;
     next();
   } catch (error) {
