@@ -29,19 +29,25 @@ function App() {
         <Route path="/SignUp" element={<Signup />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/events" element={<Events />} />
+
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/CreateEvent" element={<CreateEvent />} />
         <Route path="/registered-students" element={<EventsPage />} />
         <Route path="/Analytics" element={<Analytics />} />
         <Route path="/Users" element={<Users />} />
         <Route path="/eventManagement" element={<EventManagement />} />
+        <Route path="/admin/event/:id/registrations" element={<ViewRegister />} />
+
         <Route path="/student/dashboard" element={<DashboardStudent />} />
         <Route path="/student/events" element={<StudentEvents />} />
-        <Route path="/admin/event/:id/registrations" element={<ViewRegister />} />
+
         <Route path="/coordinator/dashboard" element={<DashboadCoordinator />} />
         <Route path="/coordinator/events" element={<CoordinatorEvents />} />
         <Route path="/coordinator/createEvent" element={<CoordinatorCreateEvent />} />
-        <Route path="/coordinator/event/:id/registrations" element={<CoordinatorViewRegister />} />
+        <Route
+          path="/coordinator/event/:id/registrations"
+          element={<CoordinatorViewRegister />}
+        />
         <Route path="/coordinator/students" element={<CoordinatorStudents />} />
       </Routes>
     </>
