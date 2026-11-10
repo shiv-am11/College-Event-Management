@@ -1,8 +1,8 @@
-
 const User = require("../models/User");
 const Event = require("../models/Event");
 const uploadFile = require("../config/imageKit");
 const sendEventEmail = require("../config/sendEventEmail");
+const recordActivity = require("../utils/activityLogger");
 
 const departmentStudents = async (req, res) => {
   try {
@@ -49,24 +49,47 @@ const getStudentFromEvents = async (req, res) => {
 
     const attendedIds = new Set(
       (event.attendedStudents || []).map((student) =>
-        student._id.toString()
+        student._id ? student._id.toString() : student.toString()
+      )
+    );
+
+    const participatedIds = new Set(
+      (event.participatedStudents || []).map((student) =>
+        student._id ? student._id.toString() : student.toString()
+      )
+    );
+
+    const certStudentIds = new Set(
+      (event.certificatesIssued || []).map((c) =>
+        c.student ? c.student.toString() : ""
       )
     );
 
     const students = (event.registeredStudent || [])
       .filter((student) => student.course === req.user.course)
-      .map((student) => ({
-        _id: student._id,
-        name: student.name,
-        email: student.email,
-        course: student.course,
-        year: student.year,
-        phone: student.phone || "N/A",
-        college: student.college || "N/A",
-        status: attendedIds.has(student._id.toString())
-          ? "Attended"
-          : "Registered",
-      }));
+      .map((student) => {
+        const sid = student._id.toString();
+        let status = "Registered";
+
+        if (certStudentIds.has(sid)) {
+          status = "Certificate Generated";
+        } else if (participatedIds.has(sid)) {
+          status = "Participated";
+        } else if (attendedIds.has(sid)) {
+          status = "Attended";
+        }
+
+        return {
+          _id: student._id,
+          name: student.name,
+          email: student.email,
+          course: student.course,
+          year: student.year,
+          phone: student.phone || "N/A",
+          college: student.college || "N/A",
+          status,
+        };
+      });
 
     return res.json(students);
   } catch (err) {
@@ -339,9 +362,7 @@ const createCoordinatorEvent = async (req, res) => {
         role: "student",
         course: req.user.course,
       }).select("name email phone");
-       console.log("Student data:", students);
-       res.json(students);
-
+      console.log("Student data:", students);
 
       await sendEventEmail(students, newEvent);
     } catch (emailError) {
@@ -371,7 +392,7 @@ const markAttendance = async (req, res) => {
     const event = await Event.findOne({
       _id: id,
       course: req.user.course,
-    }).select("registeredStudent attendedStudents");
+    }).select("title registeredStudent attendedStudents");
 
     if (!event) {
       return res.status(404).json({
@@ -397,11 +418,22 @@ const markAttendance = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "Attendance is already marked.",
+        studentId,
+        status: "Attended",
       });
     }
 
     event.attendedStudents.addToSet(studentId);
     await event.save();
+
+    // Record activity in MongoDB
+    await recordActivity({
+      studentId,
+      type: "event_attended",
+      title: "Event Attended",
+      description: `Attendance confirmed for "${event.title}"`,
+      eventId: event._id,
+    });
 
     return res.status(200).json({
       success: true,
@@ -417,6 +449,151 @@ const markAttendance = async (req, res) => {
   }
 };
 
+const confirmParticipation = async (req, res) => {
+  try {
+    const { id, studentId } = req.params;
+
+    const event = await Event.findOne({
+      _id: id,
+      course: req.user.course,
+    }).select("title registeredStudent attendedStudents participatedStudents");
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found or access denied.",
+      });
+    }
+
+    const isRegistered = (event.registeredStudent || []).some(
+      (registeredId) => registeredId.toString() === studentId
+    );
+
+    if (!isRegistered) {
+      return res.status(400).json({
+        message: "Student is not registered for this event.",
+      });
+    }
+
+    // Also mark attendance if not marked already
+    event.attendedStudents.addToSet(studentId);
+
+    if (!event.participatedStudents) {
+      event.participatedStudents = [];
+    }
+    event.participatedStudents.addToSet(studentId);
+
+    await event.save();
+
+    // Record activity in MongoDB
+    await recordActivity({
+      studentId,
+      type: "event_participated",
+      title: "Event Participated",
+      description: `Participation confirmed in "${event.title}"`,
+      eventId: event._id,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Participation confirmed successfully.",
+      studentId,
+      status: "Participated",
+    });
+  } catch (err) {
+    console.error("Confirm participation error:", err.message);
+    return res.status(500).json({
+      message: "Something went wrong!",
+    });
+  }
+};
+
+const issueCertificate = async (req, res) => {
+  try {
+    const { id, studentId } = req.params;
+    const { certificateUrl, title } = req.body || {};
+
+    const event = await Event.findOne({
+      _id: id,
+      course: req.user.course,
+    }).select("title registeredStudent attendedStudents participatedStudents certificatesIssued");
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Event not found or access denied.",
+      });
+    }
+
+    const isRegistered = (event.registeredStudent || []).some(
+      (registeredId) => registeredId.toString() === studentId
+    );
+
+    if (!isRegistered) {
+      return res.status(400).json({
+        message: "Student is not registered for this event.",
+      });
+    }
+
+    const certTitle = title || `Certificate of Participation - ${event.title}`;
+    const certUrl = certificateUrl || "";
+
+    if (!event.certificatesIssued) {
+      event.certificatesIssued = [];
+    }
+
+    const alreadyIssued = event.certificatesIssued.some(
+      (item) => item.student && item.student.toString() === studentId
+    );
+
+    if (!alreadyIssued) {
+      event.certificatesIssued.push({
+        student: studentId,
+        title: certTitle,
+        certificateUrl: certUrl,
+        issuedAt: new Date(),
+      });
+    }
+
+    // Ensure attendance and participation are also recorded
+    event.attendedStudents.addToSet(studentId);
+    if (!event.participatedStudents) {
+      event.participatedStudents = [];
+    }
+    event.participatedStudents.addToSet(studentId);
+
+    await event.save();
+
+    // Record activity in MongoDB
+    await recordActivity({
+      studentId,
+      type: "certificate_received",
+      title: "Certificate Received",
+      description: `Received "${certTitle}"`,
+      eventId: event._id,
+      certificate: {
+        title: certTitle,
+        certificateUrl: certUrl,
+        issueDate: new Date(),
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Certificate generated successfully.",
+      studentId,
+      status: "Certificate Generated",
+      certificate: {
+        title: certTitle,
+        certificateUrl: certUrl,
+      },
+    });
+  } catch (err) {
+    console.error("Issue certificate error:", err.message);
+    return res.status(500).json({
+      message: "Something went wrong!",
+    });
+  }
+};
+
 module.exports = {
   departmentStudents,
   getStudentFromEvents,
@@ -424,4 +601,6 @@ module.exports = {
   getDashboardStats,
   createCoordinatorEvent,
   markAttendance,
+  confirmParticipation,
+  issueCertificate,
 };

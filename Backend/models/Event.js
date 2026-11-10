@@ -1,32 +1,31 @@
 const mongoose = require("mongoose");
 
 const EventSchema = new mongoose.Schema({
-
   title: {
     type: String,
-    required: true
+    required: true,
   },
 
   description: String,
 
   date: {
     type: Date,
-    required: true
+    required: true,
   },
   time: {
-  type: String,
-  default: "",
-},
+    type: String,
+    default: "",
+  },
 
-startTime: {
-  type: String,
-  default: "",
-},
+  startTime: {
+    type: String,
+    default: "",
+  },
 
-endTime: {
-  type: String,
-  default: "",
-},
+  endTime: {
+    type: String,
+    default: "",
+  },
 
   venue: String,
 
@@ -35,17 +34,17 @@ endTime: {
   course: {
     type: String,
     enum: ["MCA", "BCA", "BBA", "BA ECO"],
-    required: true
+    required: true,
   },
 
   attendees: {
     type: Number,
-    default: 0
+    default: 0,
   },
 
   capacity: {
     type: Number,
-    required: true
+    required: true,
   },
 
   image: String,
@@ -53,32 +52,61 @@ endTime: {
   status: {
     type: String,
     enum: ["pending", "approved", "rejected"],
-    default: "approved"
+    default: "approved",
   },
   instructions: {
-  type: String,
-  trim:true,
-  default: "",
+    type: String,
+    trim: true,
+    default: "",
   },
   whatsappLink: {
-  type: String,
-  default: ""
+    type: String,
+    default: "",
   },
 
   registeredStudent: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "User",
-    default: []
+    default: [],
   },
   attendedStudents: {
-  type: [
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    default: [],
+  },
+  participatedStudents: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    default: [],
+  },
+  certificatesIssued: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      student: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      title: {
+        type: String,
+        default: "",
+      },
+      certificateUrl: {
+        type: String,
+        default: "",
+      },
+      issuedAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
   ],
-  default: [],
-},
 });
 
 module.exports = mongoose.model("Event", EventSchema);

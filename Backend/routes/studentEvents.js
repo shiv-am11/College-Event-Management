@@ -1,8 +1,8 @@
-
 const express = require("express");
 const mongoose = require("mongoose");
 const Event = require("../models/Event");
 const protect = require("../Middleware/authMiddleware");
+const recordActivity = require("../utils/activityLogger");
 
 const router = express.Router();
 
@@ -84,6 +84,15 @@ router.post("/events/:id/register", protect, async (req, res) => {
     event.attendees = (event.attendees || 0) + 1;
 
     await event.save();
+
+    // Store activity record in MongoDB
+    await recordActivity({
+      studentId,
+      type: "event_registered",
+      title: "Event Registered",
+      description: `Registered for "${event.title}"`,
+      eventId: event._id,
+    });
 
     return res.status(200).json({
       message: "Registered successfully",

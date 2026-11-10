@@ -10,6 +10,7 @@ import Analytics from "./Admin-Components/Analytics";
 import EventManagement from "./Admin-Components/EventManagement";
 import DashboardStudent from "./Pages/DashboardStudent";
 import StudentEvents from "./Student-Components/layout/StudentEvent";
+import StudentActivities from "./Pages/StudentActivities";
 import EventsPage from "./Admin-Components/EventsPage";
 import ViewRegister from "./Admin-Components/ViewRegister";
 import DashboadCoordinator from "./Pages/DashboadCoordinator";
@@ -40,6 +41,8 @@ function App() {
 
         <Route path="/student/dashboard" element={<DashboardStudent />} />
         <Route path="/student/events" element={<StudentEvents />} />
+        <Route path="/student/activities" element={<StudentActivities />} />
+        <Route path="/Student/Activities" element={<StudentActivities />} />
 
         <Route path="/coordinator/dashboard" element={<DashboadCoordinator />} />
         <Route path="/coordinator/events" element={<CoordinatorEvents />} />

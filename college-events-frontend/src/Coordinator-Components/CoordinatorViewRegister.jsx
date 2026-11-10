@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
@@ -6,7 +5,8 @@ import * as XLSX from "xlsx";
 import "../CSS/ViewRegister.css";
 import CoordinatorDashboardLayout from "./layout/CoordinatorDashLayout";
 
-const API_URL = "http://localhost:3000/api/coordinator";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL = `${BASE_URL}/api/coordinator`;
 
 function getInitials(name = "") {
   return name
@@ -18,14 +18,25 @@ function getInitials(name = "") {
 }
 
 function StatusBadge({ status }) {
-  const cls =
-    status === "Attended"
-      ? "badge badge-attended"
-      : status === "Certificate Generated"
-      ? "badge badge-cert"
-      : "badge badge-registered";
+  let cls = "badge badge-registered";
+  if (status === "Attended") {
+    cls = "badge badge-attended";
+  } else if (status === "Participated") {
+    cls = "badge badge-attended"; // uses attended style with purple tint
+  } else if (status === "Certificate Generated") {
+    cls = "badge badge-cert";
+  }
 
-  return <span className={cls}>{status}</span>;
+  const style =
+    status === "Participated"
+      ? { backgroundColor: "#f3e8ff", color: "#7e22ce", borderColor: "#d8b4fe" }
+      : {};
+
+  return (
+    <span className={cls} style={style}>
+      {status}
+    </span>
+  );
 }
 
 function ActionButton({ status, onClick, disabled }) {
@@ -33,7 +44,7 @@ function ActionButton({ status, onClick, disabled }) {
     return (
       <button
         className="btn-mark"
-        onClick={onClick}
+        onClick={() => onClick("attendance")}
         disabled={disabled}
       >
         Mark Attended
@@ -43,9 +54,33 @@ function ActionButton({ status, onClick, disabled }) {
 
   if (status === "Attended") {
     return (
+      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+        <button
+          className="btn-mark"
+          style={{ backgroundColor: "#7c3aed" }}
+          onClick={() => onClick("participation")}
+          disabled={disabled}
+          title="Confirm student participation"
+        >
+          Confirm Participation
+        </button>
+        <button
+          className="btn-generate"
+          onClick={() => onClick("certificate")}
+          disabled={disabled}
+          title="Generate Certificate"
+        >
+          Generate Cert
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "Participated") {
+    return (
       <button
         className="btn-generate"
-        onClick={onClick}
+        onClick={() => onClick("certificate")}
         disabled={disabled}
       >
         Generate Certificate
@@ -54,13 +89,18 @@ function ActionButton({ status, onClick, disabled }) {
   }
 
   return (
-    <button
-      className="btn-download"
-      onClick={onClick}
-      disabled={disabled}
+    <span
+      style={{
+        fontSize: "12px",
+        color: "#059669",
+        fontWeight: "600",
+        padding: "4px 8px",
+        backgroundColor: "#ecfdf5",
+        borderRadius: "6px",
+      }}
     >
-      Download
-    </button>
+      ✓ Certificate Issued
+    </span>
   );
 }
 
@@ -156,32 +196,56 @@ export default function CoordinatorViewRegister() {
     setSelected((prev) =>
       allVisibleSelected
         ? prev.filter((id) => !visibleIds.includes(id))
-        : [
-            ...new Set([
-              ...prev,
-              ...visibleIds,
-            ]),
-          ]
+        : [...new Set([...prev, ...visibleIds])]
     );
   };
 
-  const handleAction = async (student) => {
+  const handleAction = async (student, actionType) => {
     if (busyId) return;
 
-    if (student.status === "Registered") {
-      try {
-        setBusyId(student.id);
-        setError("");
+    try {
+      setBusyId(student.id);
+      setError("");
+      const token = localStorage.getItem("token");
 
-        const token = localStorage.getItem("token");
-
+      if (actionType === "attendance") {
         const res = await axios.patch(
           `${API_URL}/event/${eventId}/students/${student.id}/attendance`,
           {},
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (res.data.success) {
+          setData((prev) =>
+            prev.map((s) =>
+              s.id === student.id ? { ...s, status: "Attended" } : s
+            )
+          );
+        }
+      } else if (actionType === "participation") {
+        const res = await axios.patch(
+          `${API_URL}/event/${eventId}/students/${student.id}/participation`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (res.data.success) {
+          setData((prev) =>
+            prev.map((s) =>
+              s.id === student.id ? { ...s, status: "Participated" } : s
+            )
+          );
+        }
+      } else if (actionType === "certificate") {
+        const res = await axios.patch(
+          `${API_URL}/event/${eventId}/students/${student.id}/certificate`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
@@ -189,36 +253,19 @@ export default function CoordinatorViewRegister() {
           setData((prev) =>
             prev.map((s) =>
               s.id === student.id
-                ? { ...s, status: "Attended" }
+                ? { ...s, status: "Certificate Generated" }
                 : s
             )
           );
         }
-      } catch (err) {
-        console.error("Attendance error:", err);
-
-        setError(
-          err.response?.data?.message ||
-            "Failed to mark attendance."
-        );
-      } finally {
-        setBusyId(null);
       }
-
-      return;
-    }
-
-    if (student.status === "Attended") {
+    } catch (err) {
+      console.error("Action error:", err);
       setError(
-        "Certificate generation is not implemented yet."
+        err.response?.data?.message || "Failed to perform action."
       );
-      return;
-    }
-
-    if (student.status === "Certificate Generated") {
-      setError(
-        "Certificate download is not implemented yet."
-      );
+    } finally {
+      setBusyId(null);
     }
   };
 
@@ -301,6 +348,20 @@ export default function CoordinatorViewRegister() {
             Attended
           </div>
 
+          <div
+            className="stat-badge stat-attended"
+            style={{
+              backgroundColor: "#f3e8ff",
+              color: "#7e22ce",
+              border: "1px solid #d8b4fe",
+            }}
+          >
+            <span className="count">
+              {count("Participated")}
+            </span>{" "}
+            Participated
+          </div>
+
           <div className="stat-badge stat-cert">
             <span className="count">
               {count("Certificate Generated")}
@@ -339,7 +400,9 @@ export default function CoordinatorViewRegister() {
             onClick={() =>
               exportExcel(
                 data.filter(
-                  (s) => s.status === "Attended"
+                  (s) =>
+                    s.status === "Attended" ||
+                    s.status === "Participated"
                 ),
                 "attended-students.xlsx"
               )
@@ -393,6 +456,7 @@ export default function CoordinatorViewRegister() {
               "All",
               "Registered",
               "Attended",
+              "Participated",
               "Certificate",
             ].map((f) => (
               <button
@@ -484,7 +548,9 @@ export default function CoordinatorViewRegister() {
                         <ActionButton
                           status={s.status}
                           disabled={busyId === s.id}
-                          onClick={() => handleAction(s)}
+                          onClick={(actionType) =>
+                            handleAction(s, actionType)
+                          }
                         />
                       </td>
                     </tr>

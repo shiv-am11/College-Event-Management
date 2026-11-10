@@ -3,9 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Calendar,
-  PlusCircle,
+  Activity,
   Users,
-  ClipboardList,
   BarChart3,
   Settings,
   LogOut,
@@ -16,12 +15,12 @@ import {
 import "../layout/Student-sideBar.css";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/Student/dashboard" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/student/dashboard" },
   { icon: Calendar, label: "Events", path: "/student/events" },
-  { icon: PlusCircle, label: "My Activities", path: "/Student/Activities" },
-  { icon: Users, label: "Certificates", path: "/Student/Certificates" },
-  { icon: BarChart3, label: "Notifications", path: "/Student/Notifications" },
-  { icon: Settings, label: "Settings", path: "/Student/settings" },
+  { icon: Activity, label: "My Activities", path: "/student/activities" },
+  { icon: Users, label: "Certificates", path: "/student/certificates" },
+  { icon: BarChart3, label: "Notifications", path: "/student/notifications" },
+  { icon: Settings, label: "Settings", path: "/student/settings" },
 ];
 
 export function Sidebar() {
@@ -30,7 +29,6 @@ export function Sidebar() {
 
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
-      
       {/* Logo */}
       <div className="sidebar-logo">
         <div className="logo-icon">
@@ -49,7 +47,8 @@ export function Sidebar() {
       <nav className="sidebar-menu">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const active = location.pathname === item.path;
+          const active =
+            location.pathname.toLowerCase() === item.path.toLowerCase();
 
           return (
             <Link
@@ -69,10 +68,11 @@ export function Sidebar() {
       {/* Logout */}
       <div className="sidebar-footer">
         <Link to="/login">
-        <button className={`logout-sidebar ${collapsed ? "center" : ""}`}>
-          <LogOut size={20} />
-          {!collapsed && <span>Logout</span>}
-        </button></Link>
+          <button className={`logout-sidebar ${collapsed ? "center" : ""}`}>
+            <LogOut size={20} />
+            {!collapsed && <span>Logout</span>}
+          </button>
+        </Link>
       </div>
 
       {/* Collapse Button */}
