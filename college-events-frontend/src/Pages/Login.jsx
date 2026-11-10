@@ -44,6 +44,12 @@ const Login = () => {
       }
 
       localStorage.setItem("token", data.token);
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+      if (data.role) {
+        localStorage.setItem("role", data.role);
+      }
 
       const dashboardRoutes = {
         admin: "/admin/dashboard",

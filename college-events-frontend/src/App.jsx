@@ -11,6 +11,7 @@ import EventManagement from "./Admin-Components/EventManagement";
 import DashboardStudent from "./Pages/DashboardStudent";
 import StudentEvents from "./Student-Components/layout/StudentEvent";
 import StudentActivities from "./Pages/StudentActivities";
+import Profile from "./Pages/Profile";
 import EventsPage from "./Admin-Components/EventsPage";
 import ViewRegister from "./Admin-Components/ViewRegister";
 import DashboadCoordinator from "./Pages/DashboadCoordinator";
@@ -52,6 +53,12 @@ function App() {
           element={<CoordinatorViewRegister />}
         />
         <Route path="/coordinator/students" element={<CoordinatorStudents />} />
+
+        {/* Dedicated Profile Routes */}
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/student/profile" element={<Profile />} />
+        <Route path="/coordinator/profile" element={<Profile />} />
+        <Route path="/admin/profile" element={<Profile />} />
       </Routes>
     </>
   );
