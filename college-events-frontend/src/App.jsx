@@ -20,6 +20,7 @@ import CoordinatorCreateEvent from "./Coordinator-Components/CoordinatorCreateEv
 import CoordinatorViewRegister from "./Coordinator-Components/CoordinatorViewRegister";
 import CoordinatorStudents from "./Coordinator-Components/CoordinatorStudents";
 import { ToastHost } from "./Components/ToastHost";
+import RoleProtectedRoute from "./Components/RoleProtectedRoute";
 
 function App() {
   return (
@@ -54,11 +55,23 @@ function App() {
         />
         <Route path="/coordinator/students" element={<CoordinatorStudents />} />
 
-        {/* Dedicated Profile Routes */}
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/student/profile" element={<Profile />} />
-        <Route path="/coordinator/profile" element={<Profile />} />
-        <Route path="/admin/profile" element={<Profile />} />
+        {/* Dedicated role-protected profile routes */}
+        <Route
+          path="/student/profile"
+          element={<RoleProtectedRoute allowedRole="student"><Profile /></RoleProtectedRoute>}
+        />
+        <Route
+          path="/coordinator/profile"
+          element={<RoleProtectedRoute allowedRole="coordinator"><Profile /></RoleProtectedRoute>}
+        />
+        <Route
+          path="/admin/profile"
+          element={<RoleProtectedRoute allowedRole="admin"><Profile /></RoleProtectedRoute>}
+        />
+        <Route
+          path="/faculty/profile"
+          element={<RoleProtectedRoute allowedRole="faculty"><Profile /></RoleProtectedRoute>}
+        />
       </Routes>
     </>
   );

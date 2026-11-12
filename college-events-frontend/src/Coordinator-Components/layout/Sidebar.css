@@ -1,5 +1,5 @@
 *{
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: inherit;
 }
 .sidebar {
   position: fixed;

@@ -54,6 +54,17 @@ function getRoleFromToken() {
   }
 }
 
+function getProfilePath(role) {
+  const profileRoutes = {
+    student: "/student/profile",
+    coordinator: "/coordinator/profile",
+    admin: "/admin/profile",
+    faculty: "/faculty/profile",
+  };
+
+  return profileRoutes[String(role || "").toLowerCase().trim()] || "/Login";
+}
+
 export default function UserProfileDropdown() {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -176,7 +187,7 @@ export default function UserProfileDropdown() {
 
   const handleProfileClick = () => {
     setIsOpen(false);
-    navigate("/profile");
+    navigate(getProfilePath(getRoleFromToken() || userData.role));
   };
 
   const handleSettingsClick = () => {

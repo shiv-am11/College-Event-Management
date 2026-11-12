@@ -4,7 +4,7 @@
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 16px;
-  font-family: Arial, sans-serif;
+  font-family: inherit;
 }
 
 .title {

@@ -20,7 +20,7 @@ const menuItems = [
   {icon: PlusCircle , label: "Create Event" , path:"/coordinator/createEvent"},
   { icon: Calendar, label: "My Events", path: "/coordinator/events" },
   { icon: Users , label: "Department Students", path: "/coordinator/students" },
-  { icon: Settings, label: "Settings", path: "/Student/settings" },
+  { icon: Settings, label: "Settings", path: "/coordinator/profile" },
 ];
 
 export function Sidebar() {

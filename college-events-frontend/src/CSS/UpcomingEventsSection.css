@@ -1,7 +1,7 @@
 .events-section {
   padding: 60px 20px;
   background: #ffffff;
-  font-family: sans-serif;
+  font-family: inherit;
 }
 
 .events-container {

@@ -5,26 +5,28 @@ import {
   Calendar,
   Activity,
   Users,
-  BarChart3,
+  Award,
   Settings,
   LogOut,
   ChevronLeft,
   ChevronRight,
   GraduationCap,
+  X,
 } from "lucide-react";
 import "../layout/Student-sideBar.css";
+import "./CertificatesComingSoon.css";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/student/dashboard" },
   { icon: Calendar, label: "Events", path: "/student/events" },
   { icon: Activity, label: "My Activities", path: "/student/activities" },
   { icon: Users, label: "Certificates", path: "/student/certificates" },
-  { icon: BarChart3, label: "Notifications", path: "/student/notifications" },
-  { icon: Settings, label: "Settings", path: "/student/settings" },
+  { icon: Settings, label: "Settings", path: "/student/profile" },
 ];
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [showCertificates, setShowCertificates] = useState(false);
   const location = useLocation();
 
   return (
@@ -51,19 +53,79 @@ export function Sidebar() {
             location.pathname.toLowerCase() === item.path.toLowerCase();
 
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`menu-item ${active ? "active" : ""} ${
-                collapsed ? "center" : ""
-              }`}
-            >
-              <Icon size={20} />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
+            item.label === "Certificates" ? (
+              <button
+                key={item.path}
+                type="button"
+                className={`menu-item menu-item-button ${
+                  collapsed ? "center" : ""
+                }`}
+                onClick={() => setShowCertificates(true)}
+              >
+                <Icon size={20} />
+                {!collapsed && <span>{item.label}</span>}
+              </button>
+            ) : (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`menu-item ${active ? "active" : ""} ${
+                  collapsed ? "center" : ""
+                }`}
+              >
+                <Icon size={20} />
+                {!collapsed && <span>{item.label}</span>}
+              </Link>
+            )
           );
         })}
       </nav>
+
+      {showCertificates && (
+        <div
+          className="certificates-coming-soon-backdrop"
+          role="presentation"
+          onClick={() => setShowCertificates(false)}
+        >
+          <section
+            className="certificates-coming-soon-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="certificates-coming-soon-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="certificates-close-button"
+              aria-label="Close certificates message"
+              onClick={() => setShowCertificates(false)}
+            >
+              <X size={20} />
+            </button>
+
+            <div className="certificate-illustration" aria-hidden="true">
+              <Award size={56} strokeWidth={1.8} />
+              <span className="certificate-sparkle certificate-sparkle-one" />
+              <span className="certificate-sparkle certificate-sparkle-two" />
+            </div>
+
+            <h2 id="certificates-coming-soon-title">
+              Certificates Coming Soon!
+            </h2>
+            <p>
+              We're working on making your certificates accessible in one
+              place. Stay tuned!
+            </p>
+            <Link
+              to="/student/dashboard"
+              className="certificates-back-button"
+              onClick={() => setShowCertificates(false)}
+            >
+              Back to Dashboard
+            </Link>
+          </section>
+        </div>
+      )}
 
       {/* Logout */}
       <div className="sidebar-footer">
