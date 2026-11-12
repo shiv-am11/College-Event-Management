@@ -7,7 +7,7 @@ export function TopNavbar() {
     <header className="top-navbar">
       <div className="Admin-hero"></div>
       <div className="navbar-actions">
-        <NotificationBell enableNavigation />
+        <NotificationBell enableNavigation role="student" />
 
         {/* Dynamic Role-Based Profile Dropdown */}
         <UserProfileDropdown />

@@ -87,6 +87,18 @@ test("coordinator creation filters students by coordinator course and succeeds w
   assert.deepEqual(calls.userQueries[0], { role: "student", course: "MCA" });
   assert.equal(calls.email.length, 1);
   assert.equal(calls.email[0].event.course, "MCA");
+  assert.equal(
+    calls.notifications.filter(
+      (notification) => notification.type === "event_created" && notification.recipientRole === "student"
+    ).length,
+    1
+  );
+  assert.equal(
+    calls.notifications.filter(
+      (notification) => notification.type === "event_created" && notification.recipientRole === "admin"
+    ).length,
+    1
+  );
 });
 
 test("admin event editing does not invoke the email helper", async () => {

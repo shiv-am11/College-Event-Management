@@ -37,6 +37,14 @@ const EventSchema = new mongoose.Schema({
     required: true,
   },
 
+  // Optional for legacy events; coordinator-created events store their owner.
+  coordinator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+    index: true,
+  },
+
   attendees: {
     type: Number,
     default: 0,

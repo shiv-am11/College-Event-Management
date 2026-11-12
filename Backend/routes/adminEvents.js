@@ -8,6 +8,19 @@ const createNotification = require("../utils/notificationLogger");
 const router = express.Router();
 const upload = require("../Middleware/upload");
 
+const logRejectedNotifications = (results, recipients, context) => {
+  results.forEach((result, index) => {
+    if (result.status !== "rejected") return;
+
+    const recipientId = recipients[index]?._id || recipients[index];
+    const error = result.reason;
+    console.error(
+      `${context} failed for recipient ${recipientId}:`,
+      error?.stack || error?.message || error
+    );
+  });
+};
+
 router.post(
   "/events",
   protect,
@@ -70,6 +83,33 @@ router.post(
       });
 
       await newEvent.save();
+
+      try {
+        const students = await require("../models/User")
+          .find({ role: "student", course })
+          .select("_id");
+
+        const notificationResults = await Promise.allSettled(
+          students.map((student) =>
+            createNotification({
+              recipient: student._id,
+              recipientRole: "student",
+              title: "New Event Available",
+              message: `A new event, "${newEvent.title}", is available for ${newEvent.course} students.`,
+              type: "event_created",
+              relatedEvent: newEvent._id,
+              dedupeKey: `event_created:${newEvent._id}:${student._id}`,
+            })
+          )
+        );
+        logRejectedNotifications(
+          notificationResults,
+          students,
+          "Admin event-created notification"
+        );
+      } catch (notificationError) {
+        console.error("Admin event notification error:", notificationError.message);
+      }
 
       res.status(201).json({
         success: true,
@@ -198,6 +238,26 @@ router.put(
           })
         );
       }
+
+      const cancellationRecipients = event.registeredStudent || [];
+      const cancellationNotificationResults = await Promise.allSettled(
+        cancellationRecipients.map((studentId) =>
+          createNotification({
+            recipient: studentId,
+            recipientRole: "student",
+            title: "Event Cancelled",
+            message: `The event "${event.title}" has been cancelled.`,
+            type: "event_cancelled",
+            relatedEvent: event._id,
+            dedupeKey: `event_cancelled:${event._id}:${studentId}`,
+          })
+        )
+      );
+      logRejectedNotifications(
+        cancellationNotificationResults,
+        cancellationRecipients,
+        "Event-cancelled notification"
+      );
 
       res.json({
         success: true,

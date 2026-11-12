@@ -1,18 +1,33 @@
 const Notification = require("../models/Notification");
+const mongoose = require("mongoose");
+
+const getRecipientFilter = (req) => ({
+  recipient: req.user._id,
+  recipientRole: req.user.role,
+});
 
 exports.getNotifications = async (req, res) => {
   try {
     console.log("Notification API called");
     console.log("Logged in user:", req.user?._id);
 
-    const notifications = await Notification.find({
-      recipient: req.user._id,
-    })
+    const requestedPage = Number.parseInt(req.query.page, 10);
+    const requestedLimit = Number.parseInt(req.query.limit, 10);
+    const page = Number.isInteger(requestedPage) && requestedPage > 0
+      ? requestedPage
+      : 1;
+    const limit = Number.isInteger(requestedLimit) && requestedLimit > 0
+      ? Math.min(requestedLimit, 50)
+      : 50;
+    const filter = getRecipientFilter(req);
+    const total = await Notification.countDocuments(filter);
+    const notifications = await Notification.find(filter)
       .sort({ createdAt: -1 })
-      .limit(50);
+      .skip((page - 1) * limit)
+      .limit(limit);
 
     const unreadCount = await Notification.countDocuments({
-      recipient: req.user._id,
+      ...filter,
       isRead: false,
     });
 
@@ -20,6 +35,13 @@ exports.getNotifications = async (req, res) => {
       success: true,
       notifications,
       unreadCount,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+        hasMore: page * limit < total,
+      },
     });
 
   } catch (error) {
@@ -34,10 +56,17 @@ exports.getNotifications = async (req, res) => {
 
 exports.markAsRead = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid notification ID",
+      });
+    }
+
     const notification = await Notification.findOneAndUpdate(
       {
         _id: req.params.id,
-        recipient: req.user._id,
+        ...getRecipientFilter(req),
       },
       { isRead: true },
       { new: true }
@@ -58,7 +87,7 @@ exports.markAsRead = async (req, res) => {
 exports.markAllAsRead = async (req, res) => {
   try {
     await Notification.updateMany(
-      { recipient: req.user._id, isRead: false },
+      { ...getRecipientFilter(req), isRead: false },
       { isRead: true }
     );
 

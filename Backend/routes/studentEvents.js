@@ -104,6 +104,22 @@ router.post("/events/:id/register", protect, async (req, res) => {
       console.error("Registration notification error:", notificationError);
     }
 
+    if (event.coordinator) {
+      try {
+        await createNotification({
+          recipient: event.coordinator,
+          recipientRole: "coordinator",
+          title: "New Student Registration",
+          message: `${req.user.name || "A student"} registered for "${event.title}".`,
+          type: "student_registered",
+          relatedEvent: event._id,
+          dedupeKey: `coordinator_student_registered:${event._id}:${studentId}`,
+        });
+      } catch (notificationError) {
+        console.error("Coordinator registration notification error:", notificationError);
+      }
+    }
+
     // Store activity record in MongoDB
     await recordActivity({
       studentId,

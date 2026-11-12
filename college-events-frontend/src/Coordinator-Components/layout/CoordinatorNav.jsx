@@ -9,7 +9,7 @@ export function CoordinatorNav() {
 
       <div className="Coordi-navbar-actions">
         {/* Dynamic Notifications */}
-        <NotificationBell />
+        <NotificationBell enableNavigation role="coordinator" />
 
         {/* Dynamic Role-Based Profile Dropdown */}
         <UserProfileDropdown />

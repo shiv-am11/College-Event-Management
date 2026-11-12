@@ -5,6 +5,19 @@ const sendEventEmail = require("../config/sendEventEmail");
 const recordActivity = require("../utils/activityLogger");
 const createNotification = require("../utils/notificationLogger");
 
+const logRejectedNotifications = (results, recipients, context) => {
+  results.forEach((result, index) => {
+    if (result.status !== "rejected") return;
+
+    const recipientId = recipients[index]?._id || recipients[index];
+    const error = result.reason;
+    console.error(
+      `${context} failed for recipient ${recipientId}:`,
+      error?.stack || error?.message || error
+    );
+  });
+};
+
 const departmentStudents = async (req, res) => {
   try {
     const students = await User.find({
@@ -351,6 +364,7 @@ const createCoordinatorEvent = async (req, res) => {
       instructions: instructions.trim(),
       whatsappLink: normalizedWhatsAppLink,
       course: req.user.course,
+      coordinator: req.user._id,
       capacity: numericCapacity,
       image: imageUrl,
       status: "approved",
@@ -358,18 +372,65 @@ const createCoordinatorEvent = async (req, res) => {
 
     await newEvent.save();
 
+    let students = [];
     try {
-      const students = await User.find({
+      students = await User.find({
         role: "student",
         course: req.user.course,
-      }).select("name email");
+      }).select("_id name email");
 
       await sendEventEmail(students, newEvent);
     } catch (emailError) {
-      console.error(
-        "Event created, but email failed:",
-        emailError.message
+      console.error("Event created, but email failed:", emailError.message);
+    }
+
+    try {
+      if (students.length === 0) {
+        students = await User.find({
+          role: "student",
+          course: req.user.course,
+        }).select("_id name email");
+      }
+      const studentNotificationResults = await Promise.allSettled(
+        students.map((student) =>
+          createNotification({
+            recipient: student._id,
+            recipientRole: "student",
+            title: "New Event Available",
+            message: `A new event, "${newEvent.title}", is available for ${newEvent.course} students.`,
+            type: "event_created",
+            relatedEvent: newEvent._id,
+            dedupeKey: `event_created:${newEvent._id}:${student._id}`,
+          })
+        )
       );
+      logRejectedNotifications(
+        studentNotificationResults,
+        students,
+        "Student event-created notification"
+      );
+
+      const admins = await User.find({ role: "admin" }).select("_id name");
+      const adminNotificationResults = await Promise.allSettled(
+        admins.map((admin) =>
+          createNotification({
+            recipient: admin._id,
+            recipientRole: "admin",
+            title: "New Coordinator Event",
+            message: `${req.user.name || "A coordinator"} created "${newEvent.title}" for ${newEvent.course} students.`,
+            type: "event_created",
+            relatedEvent: newEvent._id,
+            dedupeKey: `coordinator_event_created:${newEvent._id}:${admin._id}`,
+          })
+        )
+      );
+      logRejectedNotifications(
+        adminNotificationResults,
+        admins,
+        "Admin coordinator-event notification"
+      );
+    } catch (notificationError) {
+      console.error("Event created, but notification delivery failed:", notificationError.message);
     }
 
     return res.status(201).json({
@@ -392,7 +453,7 @@ const markAttendance = async (req, res) => {
     const event = await Event.findOne({
       _id: id,
       course: req.user.course,
-    }).select("title registeredStudent attendedStudents");
+    }).select("title registeredStudent attendedStudents coordinator");
 
     if (!event) {
       return res.status(404).json({
@@ -440,6 +501,25 @@ const markAttendance = async (req, res) => {
       console.error("Attendance notification error:", notificationError);
     }
 
+    if (
+      event.coordinator &&
+      event.coordinator.toString() !== req.user._id.toString()
+    ) {
+      try {
+        await createNotification({
+          recipient: event.coordinator,
+          recipientRole: "coordinator",
+          title: "Attendance Updated",
+          message: `Attendance was marked for a student in "${event.title}".`,
+          type: "attendance_marked",
+          relatedEvent: event._id,
+          dedupeKey: `coordinator_attendance_marked:${event._id}:${studentId}`,
+        });
+      } catch (notificationError) {
+        console.error("Coordinator attendance notification error:", notificationError);
+      }
+    }
+
     // Record activity in MongoDB
     await recordActivity({
       studentId,
@@ -470,7 +550,7 @@ const confirmParticipation = async (req, res) => {
     const event = await Event.findOne({
       _id: id,
       course: req.user.course,
-    }).select("title registeredStudent attendedStudents participatedStudents");
+    }).select("title registeredStudent attendedStudents participatedStudents coordinator");
 
     if (!event) {
       return res.status(404).json({
@@ -502,14 +582,33 @@ const confirmParticipation = async (req, res) => {
       await createNotification({
         recipient: studentId,
         recipientRole: "student",
-        title: "Attendance Marked",
-        message: `Your attendance for "${event.title}" was marked successfully.`,
-        type: "attendance_marked",
+        title: "Participation Confirmed",
+        message: `Your participation in "${event.title}" was confirmed successfully.`,
+        type: "participation_confirmed",
         relatedEvent: event._id,
-        dedupeKey: `attendance_marked:${event._id}:${studentId}`,
+        dedupeKey: `participation_confirmed:${event._id}:${studentId}`,
       });
     } catch (notificationError) {
       console.error("Attendance notification error:", notificationError);
+    }
+
+    if (
+      event.coordinator &&
+      event.coordinator.toString() !== req.user._id.toString()
+    ) {
+      try {
+        await createNotification({
+          recipient: event.coordinator,
+          recipientRole: "coordinator",
+          title: "Participation Confirmed",
+          message: `A student’s participation was confirmed for "${event.title}".`,
+          type: "attendance_marked",
+          relatedEvent: event._id,
+          dedupeKey: `coordinator_participation_confirmed:${event._id}:${studentId}`,
+        });
+      } catch (notificationError) {
+        console.error("Coordinator participation notification error:", notificationError);
+      }
     }
 
     // Record activity in MongoDB
@@ -543,7 +642,7 @@ const issueCertificate = async (req, res) => {
     const event = await Event.findOne({
       _id: id,
       course: req.user.course,
-    }).select("title registeredStudent attendedStudents participatedStudents certificatesIssued");
+    }).select("title registeredStudent attendedStudents participatedStudents certificatesIssued coordinator");
 
     if (!event) {
       return res.status(404).json({
