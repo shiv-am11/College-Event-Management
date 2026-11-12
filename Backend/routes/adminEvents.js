@@ -3,6 +3,7 @@ const protect = require("../Middleware/authMiddleware");
 const allowRoles = require("../Middleware/roleMiddleware");
 const Event = require("../models/Event");
 const uploadFile = require("../config/imageKit");
+const createNotification = require("../utils/notificationLogger");
 
 const router = express.Router();
 const upload = require("../Middleware/upload");
@@ -116,6 +117,17 @@ router.put(
   allowRoles("admin"),
   async (req, res) => {
     try {
+      const previousEvent = await Event.findById(req.params.id).select(
+        "date time venue registeredStudent"
+      );
+
+      if (!previousEvent) {
+        return res.status(404).json({
+          success: false,
+          message: "Event not found",
+        });
+      }
+
       const event = await Event.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -130,6 +142,61 @@ router.put(
           success: false,
           message: "Event not found",
         });
+      }
+
+      const changedFields = ["date", "time", "venue"].filter((field) => {
+        if (!Object.prototype.hasOwnProperty.call(req.body || {}, field)) {
+          return false;
+        }
+
+        const previousValue = previousEvent[field];
+        const nextValue = event[field];
+
+        if (field === "date") {
+          return (
+            new Date(previousValue).getTime() !==
+            new Date(nextValue).getTime()
+          );
+        }
+
+        return String(previousValue || "") !== String(nextValue || "");
+      });
+
+      if (changedFields.length > 0) {
+        const dateText = event.date
+          ? new Date(event.date).toLocaleDateString("en-IN")
+          : "TBA";
+        const timeText = event.time || event.startTime || "TBA";
+        const venueText = event.venue || "TBA";
+        const dedupeSuffix = JSON.stringify({
+          changedFields,
+          date: event.date ? new Date(event.date).toISOString() : null,
+          time: timeText,
+          venue: venueText,
+        });
+
+        await Promise.all(
+          (event.registeredStudent || []).map(async (studentId) => {
+            try {
+              await createNotification({
+                recipient: studentId,
+                recipientRole: "student",
+                title: "Event Details Updated",
+                message:
+                  `The event "${event.title}" has updated details. ` +
+                  `Date: ${dateText}; Time: ${timeText}; Venue: ${venueText}.`,
+                type: "event_updated",
+                relatedEvent: event._id,
+                dedupeKey: `event_updated:${event._id}:${studentId}:${dedupeSuffix}`,
+              });
+            } catch (notificationError) {
+              console.error(
+                "Event update notification error:",
+                notificationError
+              );
+            }
+          })
+        );
       }
 
       res.json({

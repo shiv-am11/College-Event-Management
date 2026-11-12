@@ -1,11 +1,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Bell, Check, CheckCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "../CSS/NotificationBell.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function NotificationBell() {
+export default function NotificationBell({ enableNavigation = false }) {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -102,6 +104,21 @@ export default function NotificationBell() {
     }
   };
 
+  const handleNotificationClick = async (item) => {
+    await markAsRead(item);
+
+    if (!enableNavigation) return;
+
+    if (item.type === "certificate_generated") {
+      navigate("/student/activities");
+      return;
+    }
+
+    if (item.relatedEvent) {
+      navigate("/student/events");
+    }
+  };
+
   const formatTime = (date) => {
     const timestamp = new Date(date).getTime();
     if (!Number.isFinite(timestamp)) return "";
@@ -185,7 +202,7 @@ export default function NotificationBell() {
                     className={`notification-item ${
                       item.isRead ? "" : "unread"
                     }`}
-                    onClick={() => markAsRead(item)}
+                    onClick={() => handleNotificationClick(item)}
                   >
                     <span className="notification-item-icon">
                       {item.isRead ? <Check size={17} /> : <Bell size={17} />}

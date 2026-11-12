@@ -72,6 +72,7 @@
 
 .profile-edit-trigger-btn {
   display: inline-flex;
+  margin-top: 20px;
   align-items: center;
   gap: 8px;
   background: #4f46e5;
@@ -377,4 +378,3 @@
   border-radius: 8px;
   margin-bottom: 12px;
 }
-

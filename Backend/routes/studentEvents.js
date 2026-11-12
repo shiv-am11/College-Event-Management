@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Event = require("../models/Event");
 const protect = require("../Middleware/authMiddleware");
 const recordActivity = require("../utils/activityLogger");
+const createNotification = require("../utils/notificationLogger");
 
 const router = express.Router();
 
@@ -84,6 +85,24 @@ router.post("/events/:id/register", protect, async (req, res) => {
     event.attendees = (event.attendees || 0) + 1;
 
     await event.save();
+
+    try {
+      await createNotification({
+        recipient: studentId,
+        recipientRole: "student",
+        title: "Registration Confirmed",
+        message:
+          `Your registration for "${event.title}" is confirmed. ` +
+          `Date: ${new Date(event.date).toLocaleDateString("en-IN")}; ` +
+          `Time: ${event.time || event.startTime || "TBA"}; ` +
+          `Venue: ${event.venue || "TBA"}.`,
+        type: "student_registered",
+        relatedEvent: event._id,
+        dedupeKey: `student_registered:${event._id}:${studentId}`,
+      });
+    } catch (notificationError) {
+      console.error("Registration notification error:", notificationError);
+    }
 
     // Store activity record in MongoDB
     await recordActivity({

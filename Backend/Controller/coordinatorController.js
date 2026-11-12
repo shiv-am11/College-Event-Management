@@ -3,6 +3,7 @@ const Event = require("../models/Event");
 const uploadFile = require("../config/imageKit");
 const sendEventEmail = require("../config/sendEventEmail");
 const recordActivity = require("../utils/activityLogger");
+const createNotification = require("../utils/notificationLogger");
 
 const departmentStudents = async (req, res) => {
   try {
@@ -361,8 +362,7 @@ const createCoordinatorEvent = async (req, res) => {
       const students = await User.find({
         role: "student",
         course: req.user.course,
-      }).select("name email phone");
-      console.log("Student data:", students);
+      }).select("name email");
 
       await sendEventEmail(students, newEvent);
     } catch (emailError) {
@@ -426,6 +426,20 @@ const markAttendance = async (req, res) => {
     event.attendedStudents.addToSet(studentId);
     await event.save();
 
+    try {
+      await createNotification({
+        recipient: studentId,
+        recipientRole: "student",
+        title: "Attendance Marked",
+        message: `Your attendance for "${event.title}" was marked successfully.`,
+        type: "attendance_marked",
+        relatedEvent: event._id,
+        dedupeKey: `attendance_marked:${event._id}:${studentId}`,
+      });
+    } catch (notificationError) {
+      console.error("Attendance notification error:", notificationError);
+    }
+
     // Record activity in MongoDB
     await recordActivity({
       studentId,
@@ -483,6 +497,20 @@ const confirmParticipation = async (req, res) => {
     event.participatedStudents.addToSet(studentId);
 
     await event.save();
+
+    try {
+      await createNotification({
+        recipient: studentId,
+        recipientRole: "student",
+        title: "Attendance Marked",
+        message: `Your attendance for "${event.title}" was marked successfully.`,
+        type: "attendance_marked",
+        relatedEvent: event._id,
+        dedupeKey: `attendance_marked:${event._id}:${studentId}`,
+      });
+    } catch (notificationError) {
+      console.error("Attendance notification error:", notificationError);
+    }
 
     // Record activity in MongoDB
     await recordActivity({
@@ -561,6 +589,20 @@ const issueCertificate = async (req, res) => {
     event.participatedStudents.addToSet(studentId);
 
     await event.save();
+
+    try {
+      await createNotification({
+        recipient: studentId,
+        recipientRole: "student",
+        title: "Certificate Available",
+        message: `Your certificate for "${event.title}" is now available.`,
+        type: "certificate_generated",
+        relatedEvent: event._id,
+        dedupeKey: `certificate_generated:${event._id}:${studentId}`,
+      });
+    } catch (notificationError) {
+      console.error("Certificate notification error:", notificationError);
+    }
 
     // Record activity in MongoDB
     await recordActivity({

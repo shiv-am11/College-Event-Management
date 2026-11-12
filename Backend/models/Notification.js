@@ -38,6 +38,9 @@ const notificationSchema = new mongoose.Schema(
         "user_registered",
         "event_approved",
         "event_rejected",
+        "event_updated",
+        "attendance_marked",
+        "certificate_generated",
       ],
       required: true,
     },
@@ -46,6 +49,14 @@ const notificationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Event",
       default: null,
+    },
+
+    // Optional for legacy notifications; new automated notifications use it
+    // to make retries idempotent without changing existing documents.
+    dedupeKey: {
+      type: String,
+      trim: true,
+      default: undefined,
     },
 
     isRead: {
@@ -61,5 +72,10 @@ notificationSchema.index({
   isRead: 1,
   createdAt: -1,
 });
+
+notificationSchema.index(
+  { recipient: 1, dedupeKey: 1 },
+  { unique: true, sparse: true }
+);
 
 module.exports = mongoose.model("Notification", notificationSchema);
