@@ -1,4 +1,4 @@
-import { Bell, Check, CheckCheck } from "lucide-react";
+import { Bell, Check, CheckCheck, RefreshCw } from "lucide-react";
 
 function formatTime(date) {
   const timestamp = new Date(date).getTime();
@@ -31,14 +31,28 @@ export default function NotificationList({
     <>
       <div className="notification-header">
         <h3>Notifications</h3>
-        <button
-          type="button"
-          title="Mark all as read"
-          onClick={onMarkAllAsRead}
-          disabled={unreadCount === 0}
-        >
-          <CheckCheck size={17} />
-        </button>
+        <div className="notification-header-actions">
+          {!fullPage && (
+            <button
+              type="button"
+              title="Refresh notifications"
+              aria-label="Refresh notifications"
+              onClick={onRefresh}
+              disabled={loading}
+            >
+              <RefreshCw size={17} className={loading ? "notification-refreshing" : ""} />
+            </button>
+          )}
+          <button
+            type="button"
+            title="Mark all as read"
+            aria-label="Mark all as read"
+            onClick={onMarkAllAsRead}
+            disabled={unreadCount === 0}
+          >
+            <CheckCheck size={17} />
+          </button>
+        </div>
       </div>
 
       {error && <p className="notification-error">{error}</p>}
@@ -78,9 +92,6 @@ export default function NotificationList({
         <>
           <button type="button" className="notification-footer" onClick={onViewAll}>
             View all notifications
-          </button>
-          <button type="button" className="notification-footer" onClick={onRefresh}>
-            Refresh notifications
           </button>
         </>
       )}

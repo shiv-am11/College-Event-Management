@@ -55,7 +55,7 @@
   right: 0;
   z-index: 1000;
   width: min(360px, calc(100vw - 24px));
-  max-height: min(480px, 75vh);
+  max-height: min(620px, calc(100vh - 96px));
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -95,8 +95,26 @@
   cursor: not-allowed;
 }
 
+.notification-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.notification-refreshing {
+  animation: notification-spin 0.9s linear infinite;
+}
+
+@keyframes notification-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .notification-list {
   overflow-y: auto;
+  min-height: 0;
+  flex: 1 1 auto;
 }
 
 .notification-item {
@@ -165,6 +183,7 @@
 
 .notification-empty,
 .notification-error {
+  flex-shrink: 0;
   padding: 20px 16px;
   margin: 0;
   text-align: center;
@@ -201,6 +220,6 @@
     top: 70px;
     right: 12px;
     width: calc(100vw - 24px);
-    max-height: 75vh;
+    max-height: calc(100vh - 94px);
   }
 }

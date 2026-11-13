@@ -68,6 +68,128 @@ router.get(
     }
   }
 );
+
+router.get(
+  "/analytics",
+  protect,
+  allowRoles("admin"),
+  async (req, res) => {
+    try {
+      const [eventAnalytics, studentAnalytics] = await Promise.all([
+        Event.aggregate([
+          {
+            $facet: {
+              summary: [
+                {
+                  $group: {
+                    _id: null,
+                    totalEvents: { $sum: 1 },
+                    totalRegistrations: {
+                      $sum: {
+                        $cond: [
+                          { $isArray: "$registeredStudent" },
+                          { $size: "$registeredStudent" },
+                          0,
+                        ],
+                      },
+                    },
+                  },
+                },
+              ],
+              statuses: [
+                { $group: { _id: "$status", count: { $sum: 1 } } },
+                { $sort: { count: -1, _id: 1 } },
+              ],
+              categories: [
+                {
+                  $project: {
+                    category: {
+                      $let: {
+                        vars: {
+                          value: {
+                            $trim: { input: { $ifNull: ["$category", ""] } },
+                          },
+                        },
+                        in: {
+                          $cond: [
+                            { $eq: ["$$value", ""] },
+                            "Uncategorized",
+                            "$$value",
+                          ],
+                        },
+                      },
+                    },
+                  },
+                },
+                { $group: { _id: "$category", count: { $sum: 1 } } },
+                { $sort: { count: -1, _id: 1 } },
+              ],
+            },
+          },
+        ]),
+        User.aggregate([
+          { $match: { role: "student" } },
+          {
+            $project: {
+              course: {
+                $let: {
+                  vars: {
+                    value: {
+                      $trim: { input: { $ifNull: ["$course", ""] } },
+                    },
+                  },
+                  in: {
+                    $cond: [
+                      { $eq: ["$$value", ""] },
+                      "Unspecified",
+                      "$$value",
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          { $group: { _id: "$course", count: { $sum: 1 } } },
+          { $sort: { count: -1, _id: 1 } },
+        ]),
+      ]);
+
+      const eventData = eventAnalytics[0] || {};
+      const summary = eventData.summary?.[0] || {};
+      const statusCounts = (eventData.statuses || []).reduce((counts, item) => {
+        const status = item._id || "unknown";
+        counts[status] = item.count;
+        return counts;
+      }, {});
+
+      res.json({
+        success: true,
+        stats: {
+          totalEvents: summary.totalEvents || 0,
+          totalStudents: studentAnalytics.reduce((total, item) => total + item.count, 0),
+          totalRegistrations: summary.totalRegistrations || 0,
+          approvedEvents: statusCounts.approved || 0,
+          pendingEvents: statusCounts.pending || 0,
+          rejectedEvents: statusCounts.rejected || 0,
+        },
+        eventsByCategory: (eventData.categories || []).map((item) => ({
+          category: item._id,
+          count: item.count,
+        })),
+        studentsByCourse: studentAnalytics.map((item) => ({
+          course: item._id,
+          count: item.count,
+        })),
+      });
+    } catch (error) {
+      console.error("Admin analytics error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Analytics fetch failed",
+      });
+    }
+  }
+);
 router.post("/users",protect,allowRoles("admin"),createUser )
 
 module.exports = router;

@@ -22,7 +22,7 @@ const menuItems = [
   { icon: Users, label: "Registered Student", path: "/registered-students" },
   { icon: Users, label: "Users", path: "/Users" },
   { icon: BarChart3, label: "Analytics", path: "/Analytics" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: Settings, label: "Settings", path: "/admin/profile" },
 ];
 
 export function Sidebar() {
