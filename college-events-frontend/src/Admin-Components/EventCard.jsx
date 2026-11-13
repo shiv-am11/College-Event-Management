@@ -42,7 +42,7 @@ function EventCard({ event }) {
 
         <button
           className="btn-event"
-          style={{ backgroundColor: "#4f46e5" , width:"270px" ,height:"auto" ,fontSize:"14px" }}
+          style={{ backgroundColor: "#4f46e5", fontSize: "14px" }}
           onClick={() => navigate(`/admin/event/${event.id}/registrations`)}
         >
           View Registration

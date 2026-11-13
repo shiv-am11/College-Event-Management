@@ -3,16 +3,18 @@
     padding: 0px;
 }.hero {
   position: relative;
-  padding: 120px 20px;
+  padding: clamp(72px, 10vw, 120px) 20px;
   overflow: hidden;
   background:#f9fafb;
 }
 .hero-container {
-  max-width: 900px;
-  margin: auto;
+  width: min(100%, 960px);
+  max-width: 960px;
+  margin: 0 auto;
   text-align: center;
   position: relative;
   z-index: 1;
+  min-width: 0;
 }
 
 /* Background blobs */
@@ -38,10 +40,13 @@
 }
 /* Title */
 .hero-title {
-  font-size: 4rem;
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  line-height: 1.08;
   font-weight: 800;
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
   color: #111827;
+  max-width: 900px;
+  overflow-wrap: anywhere;
 }
 
 .gradient-text {
@@ -52,16 +57,17 @@
 
 /* Subtitle */
 .hero-subtitle {
+  width: min(100%, 730px);
   max-width: 730px;
-  margin: auto;
-  font-size: 24px;
+  margin: 0 auto 40px;
+  font-size: clamp(1.05rem, 2.2vw, 1.5rem);
+  line-height: 1.55;
   color: #6b7280;
-  margin-bottom: 40px;
 }
 
 /* Buttons */
 .hero-buttons {
-  margin-top: 56px;
+  margin-top: 0;
   display: flex;
   gap: 15px;
   justify-content: center;
@@ -107,7 +113,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
-  margin-top: 90px;
+  margin-top: clamp(56px, 8vw, 90px);
  
 }
 .Hero-stat h3 {
@@ -175,8 +181,20 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 2.3rem;
+  .hero {
+    padding-inline: 16px;
+  }
+
+  .hero-buttons {
+    gap: 12px;
+  }
+
+  .btn-primary-Hero,
+  .btn-outline-Hero {
+    max-width: 100%;
+    width: min(100%, 260px);
+    box-sizing: border-box;
+    white-space: normal;
   }
 
   .hero-stats {
