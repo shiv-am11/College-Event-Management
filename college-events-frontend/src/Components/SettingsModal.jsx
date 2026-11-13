@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import axios from "axios";
 import {
   X,
@@ -15,21 +16,37 @@ import { API_BASE_URL } from "../config/api";
 
 const BASE_URL = API_BASE_URL;
 
-export default function SettingsModal({ isOpen, onClose }) {
+export default function SettingsModal({ isOpen, onClose, passwordOnly = false }) {
   const [activeTab, setActiveTab] = useState("password");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   // Notification preference
   const [emailNotifications, setEmailNotifications] = useState(() => {
     return localStorage.getItem("campushub_email_notifications") !== "false";
   });
+
+  const handleClose = useCallback(() => {
+    if (saving) return;
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setError("");
+    setSuccess("");
+    setFieldErrors({});
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    onClose();
+  }, [onClose, saving]);
 
   // Handle Escape key
   useEffect(() => {
@@ -37,13 +54,13 @@ export default function SettingsModal({ isOpen, onClose }) {
 
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        onClose();
+        handleClose();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   if (!isOpen) return null;
 
@@ -51,19 +68,28 @@ export default function SettingsModal({ isOpen, onClose }) {
     e.preventDefault();
     setError("");
     setSuccess("");
+    const nextFieldErrors = {};
 
     if (!currentPassword) {
-      setError("Please enter your current password.");
-      return;
+      nextFieldErrors.currentPassword = "Current password is required.";
     }
 
-    if (!newPassword || newPassword.length < 6) {
-      setError("New password must be at least 6 characters long.");
-      return;
+    if (!newPassword) {
+      nextFieldErrors.newPassword = "New password is required.";
+    } else if (newPassword.length < 6) {
+      nextFieldErrors.newPassword = "New password must be at least 6 characters long.";
+    } else if (newPassword === currentPassword) {
+      nextFieldErrors.newPassword = "New password must differ from current password.";
     }
 
-    if (newPassword !== confirmPassword) {
-      setError("New password and confirm password do not match.");
+    if (!confirmPassword) {
+      nextFieldErrors.confirmPassword = "Please confirm your new password.";
+    } else if (newPassword !== confirmPassword) {
+      nextFieldErrors.confirmPassword = "Passwords do not match.";
+    }
+
+    setFieldErrors(nextFieldErrors);
+    if (Object.keys(nextFieldErrors).length > 0) {
       return;
     }
 
@@ -86,6 +112,7 @@ export default function SettingsModal({ isOpen, onClose }) {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmPassword("");
+        setFieldErrors({});
       }
     } catch (err) {
       setError(
@@ -105,16 +132,24 @@ export default function SettingsModal({ isOpen, onClose }) {
     setTimeout(() => setSuccess(""), 2500);
   };
 
-  return (
-    <div className="settings-modal-backdrop" onClick={onClose}>
-      <div className="settings-modal-card" onClick={(e) => e.stopPropagation()}>
+  return createPortal(
+    <div className="settings-modal-backdrop" onClick={handleClose}>
+      <div
+        className="settings-modal-card"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="change-password-modal-title"
+      >
         {/* Header */}
         <div className="settings-modal-header">
-          <h3>Settings</h3>
+          <h3 id="change-password-modal-title">
+            {passwordOnly ? "Change Password" : "Settings"}
+          </h3>
           <button
             type="button"
             className="settings-modal-close-btn"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close"
           >
             <X size={18} />
@@ -122,7 +157,7 @@ export default function SettingsModal({ isOpen, onClose }) {
         </div>
 
         {/* Tabs */}
-        <div className="settings-tabs-row">
+        {!passwordOnly && <div className="settings-tabs-row">
           <button
             type="button"
             className={`settings-tab-btn ${activeTab === "password" ? "active" : ""}`}
@@ -148,7 +183,7 @@ export default function SettingsModal({ isOpen, onClose }) {
             <Bell size={15} />
             Preferences
           </button>
-        </div>
+        </div>}
 
         {/* Body */}
         <div className="settings-modal-body">
@@ -169,15 +204,17 @@ export default function SettingsModal({ isOpen, onClose }) {
           {activeTab === "password" && (
             <form onSubmit={handlePasswordSubmit}>
               <div className="settings-form-group">
-                <label>Current Password</label>
+                <label htmlFor="current-password">Current Password</label>
                 <div className="settings-input-wrapper">
                   <input
+                    id="current-password"
                     type={showCurrentPassword ? "text" : "password"}
                     className="settings-input"
                     placeholder="Enter your current password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     required
+                    aria-invalid={Boolean(fieldErrors.currentPassword)}
                   />
                   <button
                     type="button"
@@ -188,18 +225,23 @@ export default function SettingsModal({ isOpen, onClose }) {
                     {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
+                {fieldErrors.currentPassword && (
+                  <span className="settings-field-error">{fieldErrors.currentPassword}</span>
+                )}
               </div>
 
               <div className="settings-form-group">
-                <label>New Password</label>
+                <label htmlFor="new-password">New Password</label>
                 <div className="settings-input-wrapper">
                   <input
+                    id="new-password"
                     type={showNewPassword ? "text" : "password"}
                     className="settings-input"
                     placeholder="At least 6 characters"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
+                    aria-invalid={Boolean(fieldErrors.newPassword)}
                   />
                   <button
                     type="button"
@@ -210,25 +252,44 @@ export default function SettingsModal({ isOpen, onClose }) {
                     {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
+                {fieldErrors.newPassword && (
+                  <span className="settings-field-error">{fieldErrors.newPassword}</span>
+                )}
               </div>
 
               <div className="settings-form-group">
-                <label>Confirm New Password</label>
-                <input
-                  type="password"
-                  className="settings-input"
-                  placeholder="Re-type your new password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
+                <label htmlFor="confirm-password">Confirm New Password</label>
+                <div className="settings-input-wrapper">
+                  <input
+                    id="confirm-password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="settings-input"
+                    placeholder="Re-type your new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    aria-invalid={Boolean(fieldErrors.confirmPassword)}
+                  />
+                  <button
+                    type="button"
+                    className="settings-password-toggle"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    tabIndex={-1}
+                    aria-label={showConfirmPassword ? "Hide confirmed password" : "Show confirmed password"}
+                  >
+                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                {fieldErrors.confirmPassword && (
+                  <span className="settings-field-error">{fieldErrors.confirmPassword}</span>
+                )}
               </div>
 
               <div className="settings-modal-actions">
                 <button
                   type="button"
                   className="modal-btn cancel"
-                  onClick={onClose}
+                  onClick={handleClose}
                   disabled={saving}
                 >
                   Cancel
@@ -273,7 +334,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   className="modal-btn cancel"
-                  onClick={onClose}
+                  onClick={handleClose}
                 >
                   Close
                 </button>
@@ -282,7 +343,8 @@ export default function SettingsModal({ isOpen, onClose }) {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

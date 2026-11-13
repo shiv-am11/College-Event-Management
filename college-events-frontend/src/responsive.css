@@ -1,0 +1,337 @@
+/* Shared responsive foundation. Component styles retain the desktop design; these
+   rules only adapt the existing shells and constrained surfaces at smaller widths. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+.dashboard-layout,
+.Coordi-dashboard-layout,
+.dashboard-main,
+.Coordi-dashboard-main,
+.dashboard-content,
+.Coordi-dashboard-content {
+  min-width: 0;
+}
+
+.dashboard-main,
+.Coordi-dashboard-main {
+  margin-left: 260px;
+}
+
+.dashboard-content,
+.Coordi-dashboard-content {
+  width: 100%;
+  max-width: 100%;
+  padding: clamp(16px, 2.5vw, 30px);
+}
+
+.mobile-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+.table-wrap,
+.events-table,
+.table-container,
+.table-responsive,
+.events-table-container {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrap table,
+.events-table table,
+.table-container table,
+.table-responsive table {
+  min-width: 640px;
+}
+
+.analytics-charts,
+.content-grid,
+.dashboard-grid,
+.stats-grid,
+.Admin-stats-row,
+.stats-row,
+.row,
+.event-edit-grid {
+  min-width: 0;
+}
+
+.form-card,
+.create-event,
+.eventsM-page,
+.Admin-analytics,
+.coordinator-students-page,
+.notifications-page,
+.profile-page,
+.student-activities-page {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.user-profile-dropdown-menu,
+.notification-panel {
+  max-width: calc(100vw - 24px);
+}
+
+@media (max-width: 1023px) {
+  body .mobile-menu-toggle {
+    display: inline-flex;
+  }
+
+  body .sidebar {
+    width: min(280px, 86vw);
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);
+  }
+
+  body .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  body .sidebar.collapsed {
+    width: min(280px, 86vw);
+  }
+
+  body .sidebar.collapsed .sidebar-logo > div:last-child,
+  body .sidebar.collapsed .menu-item > span,
+  body .sidebar.collapsed .menu-item-admin > span,
+  body .sidebar.collapsed .logout-sidebar > span {
+    display: block;
+  }
+
+  body .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    border: 0;
+    background: rgba(15, 23, 42, 0.5);
+  }
+
+  body .dashboard-main,
+  body .Coordi-dashboard-main {
+    margin-left: 0;
+  }
+
+  .top-navbar,
+  .Cordi-top-navbar {
+    padding-inline: clamp(12px, 3vw, 24px);
+  }
+
+  .Admin-hero,
+  .Coordi-Admin-hero {
+    flex: 1;
+    width: auto;
+  }
+
+  body .dashboard-grid,
+  body .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard-content,
+  .Coordi-dashboard-content {
+    padding: 14px;
+  }
+
+  .navbar-actions,
+  .Coordi-navbar-actions {
+    gap: 4px;
+  }
+
+  .user-profile-dropdown-menu {
+    position: fixed;
+    top: 68px;
+    right: 12px;
+    width: min(280px, calc(100vw - 24px));
+  }
+
+  body .stats-grid,
+  body .Admin-stats-row,
+  body .stats-row,
+  body .analytics-charts {
+    grid-template-columns: 1fr;
+  }
+
+  .events-filters,
+  .toolbar,
+  .controls,
+  .buttons,
+  .settings-modal-actions,
+  .logout-modal-actions {
+    flex-wrap: wrap;
+  }
+
+  .event-edit-grid,
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  body .form-card,
+  body .create-event,
+  body .Coordi-quick-card,
+  body .search-box-EM,
+  body .search-box,
+  body .events-filters,
+  body .controls,
+  body .toolbar {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body .controls {
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: 0;
+  }
+
+  body .filters-admin {
+    flex-wrap: wrap;
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .notification-panel {
+    position: fixed;
+    top: 68px;
+    right: 12px;
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 84px);
+  }
+}
+
+@media (max-width: 480px) {
+  .top-navbar,
+  .Cordi-top-navbar {
+    height: 58px;
+  }
+
+  .Admin-hero,
+  .Coordi-Admin-hero {
+    display: none;
+  }
+
+  .mobile-menu-toggle,
+  .notification-bell {
+    width: 38px;
+    height: 38px;
+  }
+
+  .dashboard-header h1,
+  .header h1,
+  .analytics-page-header h1 {
+    font-size: clamp(21px, 7vw, 28px);
+  }
+
+  .card,
+  .stat-card,
+  .analytics-chart-card,
+  .form-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 375px) {
+  .dashboard-content,
+  .Coordi-dashboard-content {
+    padding: 10px;
+  }
+
+  .notification-panel,
+  .user-profile-dropdown-menu {
+    right: 8px;
+    width: calc(100vw - 16px);
+  }
+
+  .settings-modal-backdrop,
+  .event-modal-backdrop,
+  .logout-modal-backdrop {
+    padding: 8px;
+  }
+}
+
+/* Public pages */
+@media (max-width: 767px) {
+  .hero-container,
+  .features-container,
+  .how-it-works,
+  .footer-container,
+  .navbar-container,
+  .main-login-page,
+  .signup-page {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 9vw, 3.5rem);
+    line-height: 1.08;
+  }
+
+  .hero-buttons,
+  .cta-buttons,
+  .auth-buttons {
+    flex-wrap: wrap;
+  }
+
+  .login-illustration {
+    display: none;
+  }
+
+  .main-form-container,
+  .form-container {
+    width: min(100%, 420px);
+    padding-inline: clamp(16px, 5vw, 32px);
+  }
+
+  .login-form {
+    width: 100%;
+    min-width: 0;
+    padding: 24px 16px;
+  }
+
+  .features-grid,
+  .steps,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}

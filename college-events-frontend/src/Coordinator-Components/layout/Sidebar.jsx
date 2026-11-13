@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -25,10 +25,26 @@ const menuItems = [
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
+  useEffect(() => {
+    const toggleSidebar = () => setMobileOpen((open) => !open);
+    window.addEventListener("campushub:toggle-sidebar", toggleSidebar);
+    return () => window.removeEventListener("campushub:toggle-sidebar", toggleSidebar);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   return (
-    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+    <>
+      {mobileOpen && (
+        <button type="button" className="sidebar-backdrop" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />
+      )}
+    <aside className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
       
       {/* Logo */}
       <div className="sidebar-logo">
@@ -57,6 +73,7 @@ export function Sidebar() {
               className={`menu-item ${active ? "active" : ""} ${
                 collapsed ? "center" : ""
               }`}
+              onClick={() => setMobileOpen(false)}
             >
               <Icon size={20} />
               {!collapsed && <span>{item.label}</span>}
@@ -82,5 +99,6 @@ export function Sidebar() {
         {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>
     </aside>
+    </>
   );
 }

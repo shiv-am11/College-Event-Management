@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   User,
+  Lock,
   Settings,
   LogOut,
   ChevronDown,
@@ -196,6 +197,8 @@ export default function UserProfileDropdown() {
     setShowSettingsModal(true);
   };
 
+  const isFaculty = String(userData.role || "").toLowerCase().trim() === "faculty";
+
   const handleLogoutInitiate = () => {
     setIsOpen(false);
     setShowLogoutConfirm(true);
@@ -270,8 +273,8 @@ export default function UserProfileDropdown() {
               onClick={handleSettingsClick}
               role="menuitem"
             >
-              <Settings size={16} />
-              <span>Settings</span>
+              {isFaculty ? <Settings size={16} /> : <Lock size={16} />}
+              <span>{isFaculty ? "Settings" : "Change Password"}</span>
             </button>
 
             <hr className="dropdown-menu-divider" />
@@ -329,10 +332,11 @@ export default function UserProfileDropdown() {
         </div>
       )}
 
-      {/* Settings Modal */}
+      {/* Faculty keeps the existing Settings modal; other roles open its password tab directly. */}
       <SettingsModal
         isOpen={showSettingsModal}
         onClose={() => setShowSettingsModal(false)}
+        passwordOnly={!isFaculty}
       />
     </div>
   );
