@@ -138,7 +138,10 @@ router.get(
 
       res.json({
         success: true,
-        events,
+        events: events.map((event) => ({
+          ...event.toObject(),
+          category: event.category ?? null,
+        })),
       });
 
     } catch (err) {
@@ -158,7 +161,7 @@ router.put(
   async (req, res) => {
     try {
       const previousEvent = await Event.findById(req.params.id).select(
-        "date time venue registeredStudent"
+        "date time venue status registeredStudent"
       );
 
       if (!previousEvent) {
@@ -239,7 +242,11 @@ router.put(
         );
       }
 
-      const cancellationRecipients = event.registeredStudent || [];
+      const statusChangedToRejected =
+        previousEvent.status !== "rejected" && event.status === "rejected";
+      const cancellationRecipients = statusChangedToRejected
+        ? event.registeredStudent || []
+        : [];
       const cancellationNotificationResults = await Promise.allSettled(
         cancellationRecipients.map((studentId) =>
           createNotification({

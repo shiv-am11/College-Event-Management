@@ -12,4 +12,5 @@
 /* Page content */
 .dashboard-content {
   padding: 24px;
+  --dashboard-icon-color: #6467f2;
 }

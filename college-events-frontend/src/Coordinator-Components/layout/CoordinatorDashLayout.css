@@ -13,4 +13,5 @@
 .Coordi-dashboard-content {
   padding: 24px;
   background-color: #f8fafe;
+  --dashboard-icon-color: #6467f2;
 }

@@ -54,6 +54,14 @@
   color: #6b7280;
 }
 
+.ue-capacity svg {
+  color: var(--dashboard-icon-color, #6467f2);
+}
+
+.ue-btn svg {
+  color: var(--dashboard-icon-color, #6467f2);
+}
+
 .ue-btn {
   width: 100%;
   margin-top: 10px;

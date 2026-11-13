@@ -35,7 +35,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 18px;
-  color: #4f46e5;
+  color: var(--dashboard-icon-color, #6467f2);
 }
 
 .analytics-stat strong {
@@ -68,7 +68,7 @@
   align-items: center;
   gap: 9px;
   margin-bottom: 20px;
-  color: #4f46e5;
+  color: var(--dashboard-icon-color, #6467f2);
 }
 
 .analytics-chart-heading h2 {

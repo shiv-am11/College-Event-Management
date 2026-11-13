@@ -48,12 +48,12 @@
 
 .Coordi-icon.blue {
   background: #e0e7ff;
-  color: #3b82f6;
+  color: var(--dashboard-icon-color, #6467f2);
 }
 
 .Coordi-icon.light {
   background: #e5e7eb;
-  color: #374151;
+  color: var(--dashboard-icon-color, #6467f2);
 }
 
 .Coordi-text {

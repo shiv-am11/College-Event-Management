@@ -17,6 +17,11 @@
   gap: 6px;
 }
 
+.re-row > svg,
+.re-meta svg {
+  color: var(--dashboard-icon-color, #6467f2);
+}
+
 .re-row {
   display: flex;
   align-items: center;
