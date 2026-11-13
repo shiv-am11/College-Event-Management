@@ -18,11 +18,27 @@ const logRejectedNotifications = (results, recipients, context) => {
   });
 };
 
+const getCoordinatorCourse = (req, res) => {
+  const course = typeof req.user?.course === "string" ? req.user.course.trim() : "";
+
+  if (!course) {
+    res.status(403).json({
+      message: "Coordinator department is required to access this resource.",
+    });
+    return null;
+  }
+
+  return course;
+};
+
 const departmentStudents = async (req, res) => {
   try {
+    const course = getCoordinatorCourse(req, res);
+    if (!course) return;
+
     const students = await User.find({
       role: "student",
-      course: req.user.course,
+      course,
     }).select("name email phone course year");
 
     console.log(
@@ -45,9 +61,12 @@ const departmentStudents = async (req, res) => {
 
 const getStudentFromEvents = async (req, res) => {
   try {
+    const course = getCoordinatorCourse(req, res);
+    if (!course) return;
+
     const event = await Event.findOne({
       _id: req.params.id,
-      course: req.user.course,
+      course,
     })
       .populate(
         "registeredStudent",
@@ -80,7 +99,7 @@ const getStudentFromEvents = async (req, res) => {
     );
 
     const students = (event.registeredStudent || [])
-      .filter((student) => student.course === req.user.course)
+      .filter((student) => student.course === course)
       .map((student) => {
         const sid = student._id.toString();
         let status = "Registered";
@@ -116,8 +135,11 @@ const getStudentFromEvents = async (req, res) => {
 
 const coordinatorEvents = async (req, res) => {
   try {
+    const course = getCoordinatorCourse(req, res);
+    if (!course) return;
+
     const courseEvents = await Event.find({
-      course: req.user.course,
+      course,
     }).sort({ createdAt: -1 });
 
     // Return an empty array when there are no events.
@@ -132,7 +154,8 @@ const coordinatorEvents = async (req, res) => {
 
 const getDashboardStats = async (req, res) => {
   try {
-    const course = req.user.course;
+    const course = getCoordinatorCourse(req, res);
+    if (!course) return;
 
     const totalEvents = await Event.countDocuments({ course });
 
@@ -174,6 +197,9 @@ const getDashboardStats = async (req, res) => {
 
 const createCoordinatorEvent = async (req, res) => {
   try {
+    const course = getCoordinatorCourse(req, res);
+    if (!course) return;
+
     const {
       title,
       description,
@@ -363,7 +389,7 @@ const createCoordinatorEvent = async (req, res) => {
       category: category.trim(),
       instructions: instructions.trim(),
       whatsappLink: normalizedWhatsAppLink,
-      course: req.user.course,
+      course,
       coordinator: req.user._id,
       capacity: numericCapacity,
       image: imageUrl,
@@ -376,7 +402,7 @@ const createCoordinatorEvent = async (req, res) => {
     try {
       students = await User.find({
         role: "student",
-        course: req.user.course,
+        course,
       }).select("_id name email");
 
       await sendEventEmail(students, newEvent);
@@ -388,7 +414,7 @@ const createCoordinatorEvent = async (req, res) => {
       if (students.length === 0) {
         students = await User.find({
           role: "student",
-          course: req.user.course,
+            course,
         }).select("_id name email");
       }
       const studentNotificationResults = await Promise.allSettled(
@@ -449,10 +475,12 @@ const createCoordinatorEvent = async (req, res) => {
 const markAttendance = async (req, res) => {
   try {
     const { id, studentId } = req.params;
+    const course = getCoordinatorCourse(req, res);
+    if (!course) return;
 
     const event = await Event.findOne({
       _id: id,
-      course: req.user.course,
+      course,
     }).select("title registeredStudent attendedStudents coordinator");
 
     if (!event) {
@@ -546,10 +574,12 @@ const markAttendance = async (req, res) => {
 const confirmParticipation = async (req, res) => {
   try {
     const { id, studentId } = req.params;
+    const course = getCoordinatorCourse(req, res);
+    if (!course) return;
 
     const event = await Event.findOne({
       _id: id,
-      course: req.user.course,
+      course,
     }).select("title registeredStudent attendedStudents participatedStudents coordinator");
 
     if (!event) {
@@ -638,10 +668,12 @@ const issueCertificate = async (req, res) => {
   try {
     const { id, studentId } = req.params;
     const { certificateUrl, title } = req.body || {};
+    const course = getCoordinatorCourse(req, res);
+    if (!course) return;
 
     const event = await Event.findOne({
       _id: id,
-      course: req.user.course,
+      course,
     }).select("title registeredStudent attendedStudents participatedStudents certificatesIssued coordinator");
 
     if (!event) {
