@@ -13,8 +13,9 @@ import {
 
 import DashboardLayout from "../Admin-Components/Layout/DashboardLayout";
 import "../CSS/EventMangement.css";
+import { API_BASE_URL } from "../config/api";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = API_BASE_URL;
 const categories = ["Tech", "Cultural", "Sports", "Career", "Other"];
 const courses = ["MCA", "BCA", "BBA", "BA ECO"];
 

@@ -18,8 +18,9 @@ import StudentDashboardLayout from "../Student-Components/layout/StudentDashboar
 import CoordinatorDashboardLayout from "../Coordinator-Components/layout/CoordinatorDashLayout";
 import DashboardLayout from "../Admin-Components/Layout/DashboardLayout";
 import "../CSS/Profile.css";
+import { API_BASE_URL } from "../config/api";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = API_BASE_URL;
 
 function getInitials(name = "") {
   if (!name || typeof name !== "string") return "U";

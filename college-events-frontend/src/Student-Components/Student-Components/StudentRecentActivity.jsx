@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./StudentRecentActivity.css";
+import { API_BASE_URL } from "../../config/api";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = API_BASE_URL;
 
 function formatTimeAgo(dateString) {
   if (!dateString) return "";

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { notify, LoadingOverlay } from "../Components/ToastHost";
+import { API_BASE_URL } from "../config/api";
 import "../CSS/SignUp.css";
 
 const Signup = () => {
@@ -104,7 +105,7 @@ const Signup = () => {
       setIsSubmitting(true);
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/signup`,
+        `${API_BASE_URL}/api/auth/signup`,
         {
           method: "POST",
           headers: {

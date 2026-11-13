@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./StudentUpcomingEvents.css"
+import { API_BASE_URL } from "../../config/api";
 const StudentUpcomingEvents = () => {
   const [events , setEvents] = useState([]);
   const [loading , setLoading] =useState(true)
@@ -9,7 +10,7 @@ const StudentUpcomingEvents = () => {
       try{
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/student/events`,{
+        const res = await fetch(`${API_BASE_URL}/api/student/events`,{
           headers:{
             Authorization: `Bearer ${token}`,
           },

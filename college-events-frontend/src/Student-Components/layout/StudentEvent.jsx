@@ -15,10 +15,11 @@ import {
 import "./StudentEvents.css";
 import { Sidebar } from "./Student-sideBar";
 import { TopNavbar } from "./Student-TopNavbar";
+import { API_BASE_URL } from "../../config/api";
 
 const categories = ["All", "Tech", "Cultural", "Sports", "Career", "Other"];
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = API_BASE_URL;
 
 const getStudentId = (student) => {
   if (!student) return "";

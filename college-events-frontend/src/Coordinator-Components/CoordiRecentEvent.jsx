@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./CoordiRecentEvent.css";
+import { API_BASE_URL } from "../config/api";
 
 const getStatusClass = (status) => {
   if (status === "pending") return "status ongoing";
@@ -29,7 +30,7 @@ const CoordiRecentEvent = () => {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/coordinator/events`,
+          `${API_BASE_URL}/api/coordinator/events`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

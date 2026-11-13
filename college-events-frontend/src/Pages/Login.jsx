@@ -12,6 +12,7 @@ import {
 
 import { notify, LoadingOverlay } from "../Components/ToastHost";
 import "../CSS/Login.css";
+import { API_BASE_URL } from "../config/api";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +29,7 @@ const Login = () => {
       setIsSubmitting(true);
 
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        `${API_BASE_URL}/api/auth/login`,
         { email: email.trim(), password }
       );
 

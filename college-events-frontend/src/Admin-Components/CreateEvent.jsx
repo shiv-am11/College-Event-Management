@@ -14,6 +14,7 @@ import {
 
 import DashboardLayout from "../Admin-Components/Layout/DashboardLayout";
 import "../CSS/CreateEvent.css";
+import { API_BASE_URL } from "../config/api";
 
 const categories = [
   "Tech",
@@ -113,7 +114,7 @@ export default function CreateEvent() {
       // ==========================================
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/events`,
+        `${API_BASE_URL}/api/admin/events`,
         {
           method: "POST",
 

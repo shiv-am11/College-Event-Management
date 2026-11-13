@@ -8,6 +8,7 @@ import HeroSection from "../Components/HeroSection";
 import HowItWorksSection from "../Components/HowItWorks";
 import Navbar from "../Components/Navbar";
 import UpcomingEventsSection from "../Components/UpcomingEventSection";
+import { API_BASE_URL } from "../config/api";
 
 const HomePage = () => {
 
@@ -15,7 +16,7 @@ const HomePage = () => {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/test`)
+      .get(`${API_BASE_URL}/api/test`)
       .then((res) => {
         console.log("Backend Response ", res.data);
         setBackendMsg(res.data.message);

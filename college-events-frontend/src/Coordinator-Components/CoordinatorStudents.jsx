@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import DashboardLayout from "../Coordinator-Components/layout/CoordinatorDashLayout";
 import "../Coordinator-Components/CoordinatorStudents.css";
+import { API_BASE_URL } from "../config/api";
 
 export default function CoordinatorStudents() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function CoordinatorStudents() {
         }
 
         const response = await fetch(
-          "http://localhost:3000/api/coordinator/department-students",
+          `${API_BASE_URL}/api/coordinator/department-students`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

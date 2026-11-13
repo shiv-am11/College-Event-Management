@@ -4,6 +4,7 @@ import StudentRecentActivity from "../Student-Components/Student-Components/Stud
 import StudentStatCard from "../Student-Components/Student-Components/StudentStatCard";
 import StudentUpcomingEvents from "../Student-Components/Student-Components/StudentUpcomingEvents";
 import { Calendar, Clock, Award, TrendingUp } from "lucide-react";
+import { API_BASE_URL } from "../config/api";
 
 const DashboardStudent = () => {
 
@@ -20,7 +21,7 @@ const DashboardStudent = () => {
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/student/dashboard-stats`,
+          `${API_BASE_URL}/api/student/dashboard-stats`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

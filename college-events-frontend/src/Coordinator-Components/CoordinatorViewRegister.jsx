@@ -4,9 +4,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import "../CSS/ViewRegister.css";
 import CoordinatorDashboardLayout from "./layout/CoordinatorDashLayout";
+import { API_BASE_URL } from "../config/api";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-const API_URL = `${BASE_URL}/api/coordinator`;
+const API_URL = `${API_BASE_URL}/api/coordinator`;
 
 function getInitials(name = "") {
   return name

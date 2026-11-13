@@ -4,6 +4,7 @@ import "../CSS/EventsPage.css";
 import EventCard from "./EventCard";
 import DashboardLayout from "../Admin-Components/Layout/DashboardLayout";
 import {Search, SlidersHorizontal} from "lucide-react";
+import { API_BASE_URL } from "../config/api";
 
 const STATUS = ["All", "Upcoming", "Ongoing", "Completed"];
 
@@ -14,7 +15,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/events`)
+      .get(`${API_BASE_URL}/api/events`)
       .then((res) => {
         setEvents(res.data);
       })

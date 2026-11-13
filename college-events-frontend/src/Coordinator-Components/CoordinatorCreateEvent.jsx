@@ -15,6 +15,7 @@ import {
 import DashboardLayout from "../Coordinator-Components/layout/CoordinatorDashLayout";
 import { notify, LoadingOverlay } from "../Components/ToastHost";
 import "../CSS/CreateEvent.css";
+import { API_BASE_URL } from "../config/api";
 
 const categories = ["Tech", "Cultural", "Sports", "Career", "Other"];
 
@@ -216,7 +217,7 @@ export default function CoordinatorCreateEvent() {
       data.append("image", formData.image);
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/coordinator/createEvent-coordinator`,
+        `${API_BASE_URL}/api/coordinator/createEvent-coordinator`,
         {
           method: "POST",
           headers: {

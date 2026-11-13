@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import "../CSS/ViewRegister.css";
 import DashboardLayout from "./Layout/DashboardLayout";
+import { API_BASE_URL } from "../config/api";
 
 function getInitials(name) {
   return name.split(" ").map((n) => n[0]).join("");
@@ -41,7 +42,7 @@ export default function ViewRegister() {
     const token = localStorage.getItem("token");
 
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/admin/event/${id}/registrations`, {
+      .get(`${API_BASE_URL}/api/admin/event/${id}/registrations`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

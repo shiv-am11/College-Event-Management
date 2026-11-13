@@ -11,8 +11,9 @@ import {
   Loader2,
 } from "lucide-react";
 import "../CSS/SettingsModal.css";
+import { API_BASE_URL } from "../config/api";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = API_BASE_URL;
 
 export default function SettingsModal({ isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState("password");

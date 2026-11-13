@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { Search, Calendar, MapPin, Clock, Users } from "lucide-react";
 import "../CSS/Event.css";
+import { API_BASE_URL } from "../config/api";
 
 const categories = ["All", "Technology", "Cultural", "Career"];
 
@@ -12,7 +13,7 @@ const Events = () => {
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/events`)
+    axios.get(`${API_BASE_URL}/api/events`)
       .then((res) => setEvents(res.data))
       .catch((err) => console.error("Backend not connected ❌", err));
   }, []);

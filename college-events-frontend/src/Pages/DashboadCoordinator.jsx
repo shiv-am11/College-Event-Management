@@ -6,6 +6,7 @@ import { Award, Calendar, Clock, TrendingUp, User, Users } from 'lucide-react';
 import CoordiRecentEvent from '../Coordinator-Components/CoordiRecentEvent';
 import StudentRecentActivity from '../Student-Components/Student-Components/StudentRecentActivity';
 import CoordinatorQuickActions from '../Coordinator-Components/CoordinatorQuickAction';
+import { API_BASE_URL } from '../config/api';
 
 const DashboadCoordinator = () => {
   const [stats, setStats] = useState({
@@ -19,7 +20,7 @@ const DashboadCoordinator = () => {
     const fetchStats = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/coordinator/dashboard-stats`,
+          `${API_BASE_URL}/api/coordinator/dashboard-stats`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

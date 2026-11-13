@@ -4,6 +4,7 @@ import "./CoordinatorEvents.css";
 import { Calendar, Clock, MapPin, Search, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CoordinatorDashboardLayout from "./layout/CoordinatorDashLayout";
+import { API_BASE_URL } from "../config/api";
 
 const formatDate = (dateValue) => {
   if (!dateValue) return "Date not available";
@@ -31,7 +32,7 @@ const CoordinatorEvents = () => {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          `http://localhost:3000/api/coordinator/events`,
+          `${API_BASE_URL}/api/coordinator/events`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

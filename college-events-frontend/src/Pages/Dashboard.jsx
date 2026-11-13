@@ -8,6 +8,7 @@ import StatCard from "../Admin-Components/StatCard";
 import RecentEvents from "../Admin-Components/RecentEvents";
 import QuickActions from "../Admin-Components/QuickActions";
 import UpcomingEvents from "../Admin-Components/UpcomingEvents";
+import { API_BASE_URL } from "../config/api";
 
 export default function Dashboard() {
   const [admin, setAdmin] = useState(null);
@@ -32,7 +33,7 @@ export default function Dashboard() {
         }
 
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/admin/dashboard`,
+          `${API_BASE_URL}/api/admin/dashboard`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -54,7 +55,7 @@ export default function Dashboard() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/events`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/events`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -79,7 +80,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

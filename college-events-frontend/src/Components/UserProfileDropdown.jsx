@@ -10,8 +10,9 @@ import {
 } from "lucide-react";
 import SettingsModal from "./SettingsModal";
 import "../CSS/UserProfileDropdown.css";
+import { API_BASE_URL } from "../config/api";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const BASE_URL = API_BASE_URL;
 
 // Helper to compute initials from full name
 function getInitials(name = "") {
